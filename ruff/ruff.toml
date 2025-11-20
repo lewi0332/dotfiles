@@ -1,0 +1,85 @@
+# RUFF DEFAULTS
+# (These are all the default groups, even if you don\u2019t currently select them)
+# select = [
+#     "F",    # Pyflakes \u2013 detects syntax errors and basic mistakes
+#     "E4",   # Pycodestyle errors (part of E group)
+#     "E7",   # Pycodestyle E7xx errors (naming, etc.)
+#     "E9",   # Pycodestyle E9xx errors (syntax)
+# ]
+
+lint.extend-select = [
+    "E",    # Pycodestyle errors (style issues)
+    "W",    # Pycodestyle warnings (style issues)
+    "C90",  # McCabe \u2013 complexity metric for functions
+    "I",    # isort \u2013 import ordering checks
+    "N",    # PEP8 Naming \u2013 naming conventions
+    "D",    # Pydocstyle \u2013 docstring formatting
+    "UP",   # Pyupgrade \u2013 upgrades syntax to newer Python versions
+    "YTT",  # Flake8-2020 \u2013 checks for Python 2020 best practices
+    # "ANN",  # Flake8-annotations \u2013 enforces type annotation style
+    "ASYNC",# Flake8-async \u2013 checks async/await usage
+    "S",    # Flake8-bandit \u2013 security issues
+    "BLE",  # Flake8-blind-except \u2013 flags bare excepts
+    "FBT",  # Flake8-boolean-trap \u2013 potential pitfalls with booleans
+    "B",    # Flake8-bugbear \u2013 common bug patterns
+    "A",    # Flake8-builtins \u2013 misuse of Python built-in names
+    "COM",  # Flake8-commas \u2013 trailing/comma issues
+    # "CPY",  # Flake8-copyright \u2013 copyright header checks
+    "C4",   # Flake8-comprehensions \u2013 best practices in comprehensions
+    "DTZ",  # Flake8-datetimez \u2013 requires timezone-aware datetime objects
+    "T10",  # Flake8-debugger \u2013 debugger statements (e.g. pdb)
+    "DJ",   # Flake8-django \u2013 Django-specific conventions
+    "EM",   # Flake8-errmsg \u2013 error message style
+    "EXE",  # Flake8-executable \u2013 executable file checks
+    "FA",   # Flake8-future-annotations \u2013 future import for annotations
+    "ISC",  # Flake8-implicit-str-concat \u2013 warns on implicit string concatenation
+    "ICN",  # Flake8-import-conventions \u2013 enforces conventional import aliases
+    "LOG",  # Flake8-logging \u2013 proper logging usage
+    "G",    # Flake8-logging-format \u2013 logging format string issues
+    "INP",  # Flake8-no-pep420 \u2013 warns against non-PEP420 namespace usage
+    "PIE",  # Flake8-pie \u2013 Python improvement suggestions
+    # "T20",  # Flake8-print \u2013 disallows print statements
+    "PYI",  # Flake8-pyi \u2013 checks for type stub (.pyi) consistency
+    "PT",   # Flake8-pytest-style \u2013 pytest best practices
+    "Q",    # Flake8-quotes \u2013 enforces quote style consistency
+    "RSE",  # Flake8-raise \u2013 proper raise statement usage
+    "RET",  # Flake8-return \u2013 return statement issues
+    "SLF",  # Flake8-self \u2013 flags instance methods that don't use self
+    "SLOT", # Flake8-slots \u2013 suggests use of __slots__ where appropriate
+    "SIM",  # Flake8-simplify \u2013 code simplification hints
+    "TID",  # Flake8-tidy-imports \u2013 enforces specific import styles (e.g., no relative imports)
+    "TC",   # Flake8-type-checking \u2013 proper import of typing in type checks
+    "INT",  # Flake8-gettext \u2013 checks for proper internationalization usage
+    "ARG",  # Flake8-unused-arguments \u2013 flags unused function arguments
+    "PTH",  # Flake8-use-pathlib \u2013 encourages pathlib over os.path
+    "TD",   # Flake8-todos \u2013 flags TODO comments
+    "FIX",  # Flake8-fixme \u2013 flags FIXME comments
+    # "ERA",  # Eradicate \u2013 detects commented-out code (potentially dangerous)
+    "PD",   # Pandas-vet \u2013 checks pandas-specific code practices
+    "PGH",  # Pygrep-hooks \u2013 custom grep hooks for linting
+    "PL",   # Pylint \u2013 integration with Pylint conventions
+    "TRY",  # Tryceratops \u2013 try/except usage suggestions
+    "FLY",  # Flynt \u2013 f-string conversion suggestions
+    "NPY",  # NumPy-specific rules \u2013 ensures NumPy coding standards
+    "FAST", # FastAPI \u2013 FastAPI-specific linting rules
+    "AIR",  # Airflow \u2013 Airflow-specific linting rules
+    "PERF", # Perflint \u2013 performance-related checks
+    "FURB", # Refurb \u2013 rules for code refurbishment
+    # "DOC",  # Pydoclint \u2013 docstring linting and consistency
+    "RUF",  # Ruff-specific rules \u2013 additional Ruff checks
+]
+
+lint.ignore = [
+    "E501",  # Pycodestyle - line too long
+    "D1",    # Pydocstyle - missing docstring in public module, class, or function
+    "FBT003", # Flake8-boolean-trap - boolean position value in function call
+    "D203",  # Pydocstyle - one blank line required before class docstring
+    "D212",  # Pydocstyle - summary line should be immediately after the opening quotes.
+    "D401",  # Pydocstyle - Checks for docstring first lines that are not in an imperative mood.
+    "S311",  # Flake8-bandit - Standard pseudo-random generators are not suitable for security/cryptographic purposes
+    "PERF401", # Perflint - Checks for for loops that can be replaced by a list comprehension.
+    "RET504", # Flake8-return - Checks for variable assignments that immediately precede a return of the assigned variable.
+    "FA102", # Flake8-future-annotations - Missing `from __future__ import annotations`, but uses PEP 604 union
+    "TRY003", # Tryceratops - Checks for long exception messages that are not defined in the exception class itself.
+    "EM101", # Flake8-errmsg - Checks for the use of string literals in exception constructors.
+]
