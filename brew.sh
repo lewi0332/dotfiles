@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+#TODO: adjust path between linux and mac.
+#TODO: decide if this is the right list of packages for brew to handle.
+
+
+
 # Install Homebrew if it isn't already installed
 if ! command -v brew &>/dev/null; then
     echo "Homebrew not installed. Installing Homebrew."
@@ -48,7 +53,7 @@ packages=(
     "node"
     "nvm"
     "pipx"
-    "gh"
+    # "gh"
     "ripgrep"
     "tealdeer"
 )
@@ -63,50 +68,33 @@ for package in "${packages[@]}"; do
     fi
 done
 
-# Get the path to Homebrew's zsh
-BREW_ZSH="$(brew --prefix)/bin/zsh"
-# Check if Homebrew's zsh is already the default shell
-if [ "$SHELL" != "$BREW_ZSH" ]; then
-    echo "Changing default shell to Homebrew zsh"
-    # Check if Homebrew's zsh is already in allowed shells
-    if ! grep -Fxq "$BREW_ZSH" /etc/shells; then
-        echo "Adding Homebrew zsh to allowed shells..."
-        echo "$BREW_ZSH" | sudo tee -a /etc/shells >/dev/null
-    fi
-    # Set the Homebrew zsh as default shell
-    chsh -s "$BREW_ZSH"
-    echo "Default shell changed to Homebrew zsh."
-else
-    echo "Homebrew zsh is already the default shell. Skipping configuration."
-fi
-
 # Git config name
-current_name=$($(brew --prefix)/bin/git config --global --get user.name)
+current_name=$(git config --global --get user.name)
 if [ -z "$current_name" ]; then
     echo "Please enter your FULL NAME for Git configuration:"
     read git_user_name
-    $(brew --prefix)/bin/git config --global user.name "$git_user_name"
+    git config --global user.name "$git_user_name"
     echo "Git user.name has been set to $git_user_name"
 else
     echo "Git user.name is already set to '$current_name'. Skipping configuration."
 fi
 
 # Git config email
-current_email=$($(brew --prefix)/bin/git config --global --get user.email)
+current_email=$(git config --global --get user.email)
 if [ -z "$current_email" ]; then
     echo "Please enter your EMAIL for Git configuration:"
     read git_user_email
-    $(brew --prefix)/bin/git config --global user.email "$git_user_email"
+    git config --global user.email "$git_user_email"
     echo "Git user.email has been set to $git_user_email"
 else
     echo "Git user.email is already set to '$current_email'. Skipping configuration."
 fi
 
 # Github uses "main" as the default branch name
-$(brew --prefix)/bin/git config --global init.defaultBranch main
+git config --global init.defaultBranch main
 
 # Check if already authenticated with GitHub to avoid re-authentication prompt
-if ! $(brew --prefix)/bin/gh auth status &>/dev/null; then
+if ! gh auth status &>/dev/null; then
     echo "You will need to authenticate with GitHub. Follow the prompts to login..."
     $(brew --prefix)/bin/gh auth login
 else
@@ -114,7 +102,7 @@ else
 fi
 
 # Install GitHub Copilot extension
-$(brew --prefix)/bin/gh extension install github/gh-copilot
+# $(brew --prefix)/bin/gh extension install github/gh-copilot
 
 # Define an array of applications to install using Homebrew Cask.
 # apps=(
