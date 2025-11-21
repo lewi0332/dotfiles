@@ -16,6 +16,24 @@ fi
 
 echo "Detected OS: ${OS}"
 
+
+## Keyboard repeat rate configuration
+# if [[ "$OSTYPE" == "darwin"* ]]; then
+#     # macOS
+#     defaults write NSGlobalDomain KeyRepeat -int 1
+#     defaults write NSGlobalDomain InitialKeyRepeat -int 15
+# elif [[ -n "$DISPLAY" ]]; then
+#     xset r rate 250 30
+# elif [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
+#     # Linux with Wayland (GNOME)
+#     if command -v gsettings &> /dev/null; then
+#         gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval 30
+#         gsettings set org.gnome.desktop.peripherals.keyboard delay 250
+#     fi
+# fi
+
+
+
 # Install and configure zsh on Linux
 if [[ "$OS" == "linux" ]]; then
     echo "Checking for zsh installation..."
@@ -102,5 +120,26 @@ done
 #     ./vscode.sh
 # fi
 
+# Install UV (Python package manager)
+echo "Checking for UV installation..."
+if command -v uv &> /dev/null; then
+    echo "UV is already installed. Updating to latest version..."
+    uv self update
+else
+    echo "UV not found. Installing UV..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
+# Install Ruff via UV
+echo "Checking for Ruff installation..."
+if command -v ruff &> /dev/null; then
+    echo "Ruff is already installed. Updating to latest version..."
+    uv tool upgrade ruff
+else
+    echo "Ruff not found. Installing Ruff..."
+    uv tool install ruff@latest
+fi
+
+echo "UV and Ruff installation complete!"
 
 echo "Installation Complete!"

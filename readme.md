@@ -28,12 +28,8 @@ This is my personal guide to setting up a new machine. It includes all the neces
   - `curl -LsSf https://astral.sh/uv/install.sh | sh`
 - Install ruffn
   - `uv tool install ruff@latest`
-  - 
-- Install Python packages via pipx
-
-  - `pipx install pre-commit`
-  - `pipx install black`
-  - `pipx install flake8`
+- Install pre-commit
+  - `uv tool install pre-commit@latest`
 
 - Install VSCode
   - Install extensions
@@ -41,7 +37,7 @@ This is my personal guide to setting up a new machine. It includes all the neces
   - Settings sync
 
 - Install Docker
-- 
+
 - Configure system preferences
   - cursor speed
   - trackpad settings

@@ -43,14 +43,10 @@ brew cleanup
 # Define an array of packages to install using Homebrew.
 packages=(
     "python"
-    "tcl-tk"
-    "python-tk"
-    "bash"
-    "zsh"
-    "git"
+    "neovim"
     "tree"
     "node"
-    "uv"
+    "nvm"
     "pipx"
     "gh"
     "ripgrep"
@@ -120,37 +116,21 @@ fi
 # Install GitHub Copilot extension
 $(brew --prefix)/bin/gh extension install github/gh-copilot
 
-# Install Ruff, which I use in VSCode for Python Formatting and Linting
-$(brew --prefix)/bin/uv tool install ruff
-
 # Define an array of applications to install using Homebrew Cask.
-apps=(
-    "google-chrome"
-    "firefox"
-    "brave-browser"
-    "sublime-text"
-    "visual-studio-code"
-    "git-credential-manager"
-    "docker"
-    "spotify"
-    "discord"
-    "google-drive"
-    "gimp"
-    "vlc"
-    "rectangle"
-    "postman"
-    "keyboardcleantool"
-)
+# apps=(
+#     "visual-studio-code"
+#     "docker"
+# )
 
 # Loop over the array to install each application.
-for app in "${apps[@]}"; do
-    if brew list --cask | grep -q "^$app\$"; then
-        echo "$app is already installed. Skipping..."
-    else
-        echo "Installing $app..."
-        brew install --cask "$app"
-    fi
-done
+# for app in "${apps[@]}"; do
+#     if brew list --cask | grep -q "^$app\$"; then
+#         echo "$app is already installed. Skipping..."
+#     else
+#         echo "Installing $app..."
+#         brew install --cask "$app"
+#     fi
+# done
 
 # Install fonts. Fonts are now available directly from Homebrew cask
 fonts=(
@@ -191,21 +171,3 @@ brew update
 brew upgrade
 brew upgrade --cask
 brew cleanup
-
-echo "Sign in to Google Chrome. Press enter to continue..."
-read
-
-echo "Connect Google Account (System Settings -> Internet Accounts). Press enter to continue..."
-read
-
-echo "Sign in to Spotify. Press enter to continue..."
-read
-
-echo "Sign in to Discord. Press enter to continue..."
-read
-
-echo "Open Rectangle and give it necessary permissions. Press enter to continue..."
-read
-
-echo "Import your Rectangle settings located in ~/dotfiles/settings/RectangleConfig.json. Press enter to continue..."
-read
