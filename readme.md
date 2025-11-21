@@ -9,8 +9,12 @@ This is my personal guide to setting up a new machine. It includes all the neces
   - on linux - `sudo apt update && sudo apt install git`
 
   - Set up SSH keys
+  - check for existing keys: `ls -al ~/.ssh`
+  - generate key: `ssh-keygen -t ed25519 -C "name@email.com"`
   - SSH eval agent: `eval "$(ssh-agent -s)"`
   - SSH add: `ssh-add ~/.ssh/id_ed25519`
+  - copy the public key: `cat ~/.ssh/id_ed25519.pub`
+  - Add to GitHub/GitLab/Bitbucket
   - Configure global username and email
     - `git config --global user.name "Your Name"`
     - `git config --global user.email "your.email@example.com"`

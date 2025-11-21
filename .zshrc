@@ -29,7 +29,7 @@ unset file
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # GitHub Copilot CLI shell integration
-eval "$(gh copilot alias -- zsh)"
+# eval "$(gh copilot alias -- zsh)"
 
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -38,14 +38,3 @@ if [ -x /usr/bin/dircolors ]; then
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
-
-
-# Default WORDCHARS: *?_-.[]~=/&;!#$%^(){}<>
-# Modified to exclude forward slash for better path component deletion
-WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-
-# Created by pipx
-export PATH="$PATH:/Users/coreyschafer/.local/bin"
-
-. "$HOME/.local/bin/env"
-
