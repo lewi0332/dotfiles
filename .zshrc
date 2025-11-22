@@ -13,8 +13,7 @@ export HISTSIZE=10000
 export SAVEHIST=10000
 
 # These options improve history behavior across sessions
-setopt SHARE_HISTORY          # Share command history across all open sessions
-setopt APPEND_HISTORY         # Append history rather than overwriting it
+setopt SHARE_HISTORY          # Share command history across all open sessions (includes APPEND_HISTORY and INC_APPEND_HISTORY)
 setopt HIST_REDUCE_BLANKS     # Remove superfluous blanks from each command line being added to the history list
 setopt HIST_IGNORE_SPACE      # Ignore commands that start with a space (for secret or experimental commands)
 setopt HIST_EXPIRE_DUPS_FIRST # Expire duplicates first when trimming history
@@ -40,3 +39,5 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 export PATH="$HOME/.cargo/bin:$HOME/bin:$PATH"
+
+export NVIM_APPNAME="nvim-lab"
