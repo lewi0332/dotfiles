@@ -41,3 +41,20 @@ fi
 export PATH="$HOME/.cargo/bin:$HOME/bin:$PATH"
 
 export NVIM_APPNAME="nvim-lab"
+
+unset() {
+  local current_branch=$(git branch --show-current 2>/dev/null)
+
+  if [[ -z "$current_branch" ]]; then
+    echo "Not in a git repository"
+    return 1
+  fi
+
+  if [[ "$current_branch" == "main" || "$current_branch" == "master" ]]; then
+    echo "Cannot unset upstream for $current_branch branch"
+    return 1
+  fi
+
+  git branch --unset-upstream && echo "Unset upstream for branch: $current_branch"
+}
+
