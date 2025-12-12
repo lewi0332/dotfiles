@@ -60,7 +60,7 @@ dotfiledir="${HOME}/dotfiles"
 
 # list of files/folders to symlink in ${homedir}
 # Use zsh files for all systems now
-files=(zshrc zprompt aliases) # Add this in later: zprofile
+files=(zshrc zprompt shared_prompt aliases) # Add this in later: zprofile
 
 # change to the dotfiles directory
 echo "Changing to the ${dotfiledir} directory"
