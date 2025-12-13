@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 #TODO: adjust path between linux and mac.
 #TODO: decide if this is the right list of packages for brew to handle.
@@ -47,15 +47,11 @@ brew cleanup
 
 # Define an array of packages to install using Homebrew.
 packages=(
-    "python"
-    "neovim"
-    "tree"
     "node"
     "nvm"
     "pipx"
-    # "gh"
     "ripgrep"
-    "tealdeer"
+    #'gh'
 )
 
 # Loop over the array to install each application.
@@ -94,12 +90,12 @@ fi
 git config --global init.defaultBranch main
 
 # Check if already authenticated with GitHub to avoid re-authentication prompt
-if ! gh auth status &>/dev/null; then
-    echo "You will need to authenticate with GitHub. Follow the prompts to login..."
-    $(brew --prefix)/bin/gh auth login
-else
-    echo "Already authenticated with GitHub. Skipping login."
-fi
+# if ! gh auth status &>/dev/null; then
+#     echo "You will need to authenticate with GitHub. Follow the prompts to login..."
+#     $(brew --prefix)/bin/gh auth login
+# else
+#     echo "Already authenticated with GitHub. Skipping login."
+# fi
 
 # Install GitHub Copilot extension
 # $(brew --prefix)/bin/gh extension install github/gh-copilot

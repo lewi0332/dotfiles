@@ -16,6 +16,68 @@ fi
 
 echo "Detected OS: ${OS}"
 
+# Install Homebrew on macOS
+if [[ "$OS" == "macos" ]]; then
+    echo "Checking for Homebrew installation..."
+    if ! command -v brew &> /dev/null; then
+        echo "Homebrew not found. Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        
+        # Add Homebrew to PATH for Apple Silicon Macs
+        if [[ -f "/opt/homebrew/bin/brew" ]]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
+        
+    else
+        echo "Homebrew is already installed."
+    fi
+    
+    # Run brew.sh for package installation on macOS
+    if [[ -f "${HOME}/dotfiles/brew.sh" ]]; then
+        echo "Running brew.sh for macOS package installation..."
+        bash "${HOME}/dotfiles/brew.sh"
+    else
+        echo "⚠️  brew.sh not found. Skipping Homebrew package installation."
+    fi
+fi
+
+# Install zsh
+echo "Checking for zsh installation..."
+if ! command -v zsh &> /dev/null; then
+    echo "zsh not found. Installing zsh..."
+    if [[ "$OS" == "macos" ]]; then
+        brew install zsh
+    else
+        sudo apt update
+        sudo apt install -y zsh
+    fi
+else
+    echo "zsh is already installed."
+fi
+
+# Set zsh as default shell
+if [[ "$SHELL" != *"zsh"* ]]; then
+    echo "Setting zsh as the default shell..."
+    chsh -s "$(which zsh)"
+    echo "zsh is now the default shell. You may need to log out and back in for this to take effect."
+else
+    echo "zsh is already the default shell."
+fi
+
+# Install tmux
+echo "Checking for tmux installation..."
+if ! command -v tmux &> /dev/null; then
+    echo "tmux not found. Installing tmux..."
+    if [[ "$OS" == "macos" ]]; then
+        brew install tmux
+    else
+        sudo apt update
+        sudo apt install -y tmux
+    fi
+else
+    echo "tmux is already installed."
+fi
+
 
 ## Keyboard repeat rate configuration
 # if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -31,29 +93,6 @@ echo "Detected OS: ${OS}"
 #         gsettings set org.gnome.desktop.peripherals.keyboard delay 250
 #     fi
 # fi
-
-
-
-# Install and configure zsh on Linux
-if [[ "$OS" == "linux" ]]; then
-    echo "Checking for zsh installation..."
-    if ! command -v zsh &> /dev/null; then
-        echo "zsh not found. Installing zsh..."
-        sudo apt update
-        sudo apt install -y zsh
-    else
-        echo "zsh is already installed."
-    fi
-    
-    # Check if zsh is already the default shell
-    if [[ "$SHELL" != *"zsh"* ]]; then
-        echo "Setting zsh as the default shell..."
-        chsh -s "$(which zsh)"
-        echo "zsh is now the default shell. You may need to log out and back in for this to take effect."
-    else
-        echo "zsh is already the default shell."
-    fi
-fi
 
 # dotfiles directory
 dotfiledir="${HOME}/dotfiles"
@@ -102,18 +141,18 @@ for config in "${configs[@]}"; do
 done
 
 
-# # Run OS-specific scripts
-# if [[ "$OS" == "macos" ]]; then
-#     # Run the MacOS Script
-#     if [[ -f "./macOS.sh" ]]; then
-#         ./macOS.sh
-#     fi
+# Run OS-specific scripts
+if [[ "$OS" == "macos" ]]; then
+    # Run the MacOS Script
+    if [[ -f "./macOS.sh" ]]; then
+        ./macOS.sh
+    fi
     
-#     # Run the Homebrew Script
-#     if [[ -f "./brew.sh" ]]; then
-#         ./brew.sh
-#     fi
-# fi
+    # Run the Homebrew Script
+    if [[ -f "./brew.sh" ]]; then
+        ./brew.sh
+    fi
+fi
 
 # # Run VS Code Script
 # if [[ -f "./vscode.sh" ]]; then
