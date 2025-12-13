@@ -1,3 +1,8 @@
+# If not running zsh, don't do anything
+if [ -z "$ZSH_VERSION" ]; then
+    return
+fi
+
 autoload -Uz colors && colors
 setopt PROMPT_SUBST
 
@@ -40,7 +45,7 @@ fi
 
 export PATH="$HOME/.cargo/bin:$HOME/bin:$PATH"
 
-export NVIM_APPNAME="nvim-lab"
+export NVIM_APPNAME="kickstart"
 
 unset() {
   local current_branch=$(git branch --show-current 2>/dev/null)
