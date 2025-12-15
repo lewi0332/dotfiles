@@ -9,7 +9,7 @@ return {
           repl_definition = {
             python = {
               command = { 'ipython', '-i', '-c', 'import matplotlib.pyplot as plt; plt.ion()' },
-              format = require('iron.fts.common').newline,
+              format = require('iron.fts.common').bracketed_paste,
               block_dividers = { '# %%', '#%%' },
             },
             rust = {
