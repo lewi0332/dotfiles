@@ -47,7 +47,7 @@ export PATH="$HOME/.cargo/bin:$HOME/bin:$PATH"
 
 export NVIM_APPNAME="kickstart"
 
-unset() {
+unset-upstream() {
   local current_branch=$(git branch --show-current 2>/dev/null)
 
   if [[ -z "$current_branch" ]]; then
