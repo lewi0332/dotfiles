@@ -122,6 +122,18 @@ else
     cd - > /dev/null || exit
 fi
 
+# Install starship
+echo "Checking for starship installation..."
+if ! command -v starship &> /dev/null; then
+    echo "starship not found. Installing starship..."
+    if [[ "$OS" == "macos" ]]; then
+        brew install starship
+    else
+        curl -sS https://starship.rs/install.sh | sh -s -- -y
+    fi
+else
+    echo "starship is already installed."
+fi
 
 ## Keyboard repeat rate configuration
 # if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -178,6 +190,25 @@ for config in "${configs[@]}"; do
         echo "$target already exists as a symlink."
     elif [ -e "$target" ]; then
         echo "⚠️  $target already exists as a directory/file. Skipping."
+    else
+        ln -s "$source" "$target"
+        echo "✅ Created symlink: $target -> $source"
+    fi
+done
+
+
+# list of config files to symlink (single files, not directories)
+config_files=(starship.toml)
+
+# create symlinks for config files
+for config_file in "${config_files[@]}"; do
+    source="${dotfiledir}/${config_file}"
+    target="${HOME}/.config/${config_file}"
+    
+    if [ -L "$target" ]; then
+        echo "$target already exists as a symlink."
+    elif [ -e "$target" ]; then
+        echo "⚠️  $target already exists as a file. Skipping."
     else
         ln -s "$source" "$target"
         echo "✅ Created symlink: $target -> $source"

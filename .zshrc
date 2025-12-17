@@ -63,3 +63,5 @@ unset-upstream() {
   git branch --unset-upstream && echo "Unset upstream for branch: $current_branch"
 }
 
+# starship prompt
+eval "$(starship init zsh)"
