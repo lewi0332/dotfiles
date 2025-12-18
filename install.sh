@@ -39,6 +39,14 @@ if [[ "$OS" == "macos" ]]; then
     else
         echo "⚠️  brew.sh not found. Skipping Homebrew package installation."
     fi
+
+    # Run macOS system configuration
+    if [[ -f "${HOME}/dotfiles/macOS.sh" ]]; then
+        echo "Running macOS system configuration..."
+        bash "${HOME}/dotfiles/macOS.sh"
+    else
+        echo "⚠️  macOS.sh not found. Skipping macOS configuration."
+    fi
 fi
 
 # Install zsh
@@ -218,18 +226,7 @@ for config_file in "${config_files[@]}"; do
 done
 
 
-# Run OS-specific scripts
-if [[ "$OS" == "macos" ]]; then
-    # Run the MacOS Script
-    if [[ -f "./macOS.sh" ]]; then
-        ./macOS.sh
-    fi
-    
-    # Run the Homebrew Script
-    if [[ -f "./brew.sh" ]]; then
-        ./brew.sh
-    fi
-fi
+
 
 # # Run VS Code Script
 # if [[ -f "./vscode.sh" ]]; then
