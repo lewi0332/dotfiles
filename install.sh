@@ -87,7 +87,9 @@ else
 fi
 
 # Check if font is already installed
-if fc-list | grep -qi "JetBrainsMono"; then
+if command -v fc-list &> /dev/null && fc-list | grep -qi "JetBrainsMono"; then
+    echo "JetBrains Mono Nerd Font is already installed."
+elif [[ "$OS" == "macos" ]] && ls "$FONT_DIR"/JetBrainsMono*.ttf &> /dev/null 2>&1; then
     echo "JetBrains Mono Nerd Font is already installed."
 else
     echo "Installing JetBrains Mono Nerd Font..."
@@ -102,7 +104,7 @@ else
     else
         echo "⚠️  Neither wget nor curl found. Cannot download font."
         cd - > /dev/null || exit
-        return 1
+        exit 1
     fi
     
     if [[ -f JetBrainsMono.zip ]]; then
@@ -246,7 +248,7 @@ fi
 
 # Install Ruff via UV
 echo "Checking for Ruff installation..."
-if command -v ruff &> /dev/null; then
+if uv tool list | grep -q "^ruff "; then
     echo "Ruff is already installed. Updating to latest version..."
     uv tool upgrade ruff
 else
