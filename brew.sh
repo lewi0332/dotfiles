@@ -51,7 +51,8 @@ packages=(
     "nvm"
     "pipx"
     "ripgrep"
-    #'gh'
+    #'gh.'
+    "lazygit"
 )
 
 # Loop over the array to install each application.
