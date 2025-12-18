@@ -8,7 +8,7 @@ return {
           scratch_repl = true,
           repl_definition = {
             python = {
-              command = { 'ipython', '-i', '-c', 'import matplotlib.pyplot as plt; plt.ion()' },
+              command = 'ipython',
               format = require('iron.fts.common').bracketed_paste,
               block_dividers = { '# %%', '#%%' },
             },
@@ -24,8 +24,8 @@ return {
             },
           },
           repl_open_cmd = {
-            view.split.rightbelow(),
             view.split.vertical.rightbelow(),
+            view.split.rightbelow(),
           },
         },
         keymaps = {
