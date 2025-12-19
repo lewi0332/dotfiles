@@ -86,6 +86,17 @@ else
     echo "tmux is already installed."
 fi
 
+if [[ "$OS" == "linux" ]]; then
+    echo "Checking for lazygit installation..."
+    if ! command -v lazygit &> /dev/null; then
+        echo "lazygit not found. Installing lazygit..."
+        sudo apt update
+        sudo apt install -y lazygit
+    else
+        echo "lazygit is already installed."
+    fi
+fi
+
 # Install JetBrains Mono Nerd Font
 echo "Checking for JetBrains Mono Nerd Font installation..."
 if [[ "$OS" == "macos" ]]; then
