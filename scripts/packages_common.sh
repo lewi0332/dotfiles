@@ -76,7 +76,7 @@ install_common_packages() {
         uv self update
     else
         echo "UV not found. Installing UV..."
-        curl -LsSf https://astral.sh/uv/install.sh | sh
+        curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --no-modify-path
         
         # Add UV to PATH for current session
         export PATH="$HOME/.local/bin:$PATH"
