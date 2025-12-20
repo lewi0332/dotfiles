@@ -41,6 +41,34 @@ install_common_packages() {
         echo "tmux is already installed."
     fi
 
+    # Install fzf
+    echo "Checking for fzf installation..."
+    if ! command -v fzf &> /dev/null; then
+        echo "fzf not found. Installing fzf..."
+        if [[ "$OS" == "macos" ]]; then
+            brew install fzf
+        else
+            sudo apt update
+            sudo apt install -y fzf
+        fi
+    else
+        echo "fzf is already installed."
+    fi
+
+    # Install zoxide
+    echo "Checking for zoxide installation..."
+    if ! command -v zoxide &> /dev/null; then
+        echo "zoxide not found. Installing zoxide..."
+        if [[ "$OS" == "macos" ]]; then
+            brew install zoxide
+        else
+            sudo apt update
+            sudo apt install -y zoxide
+        fi
+    else
+        echo "zoxide is already installed."
+    fi
+
     # Install UV (Python package manager)
     echo "Checking for UV installation..."
     if command -v uv &> /dev/null; then
