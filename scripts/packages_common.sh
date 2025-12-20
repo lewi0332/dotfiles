@@ -103,5 +103,19 @@ install_common_packages() {
         echo "⚠️  UV not available. Skipping Ruff installation. Run script again after sourcing shell config."
     fi
 
-    echo "UV and Ruff installation complete!"
+    # Install pre-commit via UV
+    echo "Checking for pre-commit installation..."
+    if command -v uv &> /dev/null; then
+        if uv tool list | grep -q "^pre-commit "; then
+            echo "pre-commit is already installed. Updating to latest version..."
+            uv tool upgrade pre-commit
+        else
+            echo "pre-commit not found. Installing pre-commit..."
+            uv tool install pre-commit@latest
+        fi
+    else
+        echo "⚠️  UV not available. Skipping pre-commit installation. Run script again after sourcing shell config."
+    fi
+
+    echo "UV, Ruff, and pre-commit installation complete!"
 }

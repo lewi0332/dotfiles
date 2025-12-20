@@ -1,4 +1,95 @@
-# Setup New Dev Machine
+# Modular Install Script Structure
+
+## Overview
+This is a modular approach to the dotfiles installation script, breaking apart the monolithic `install.sh` into smaller, focused modules.
+
+## File Structure
+
+```
+dotfiles/
+├── install_modular.sh          # Main orchestrator (run this)
+├── scripts/
+│   ├── detect_os.sh            # OS detection
+│   ├── packages_common.sh      # Cross-platform packages (zsh, tmux, uv, ruff)
+│   ├── packages_macos.sh       # macOS-specific (Homebrew, brew.sh)
+│   ├── packages_linux.sh       # Linux-specific (neovim PPA, lazygit)
+│   ├── fonts.sh                # Font installation (JetBrains Mono)
+│   └── symlinks.sh             # Dotfile and config symlinks
+├── brew.sh                     # macOS Homebrew packages (called by packages_macos.sh)
+├── macOS.sh                    # macOS system config (called by packages_macos.sh)
+└── [existing dotfiles...]
+```
+
+## Usage
+
+### To install using the modular approach:
+```bash
+cd ~/dotfiles
+chmod +x install.sh scripts/*.sh
+./install.sh
+```
+
+### To test individual modules:
+```bash
+# Test just symlinks
+source scripts/detect_os.sh
+detect_os
+source scripts/symlinks.sh
+create_symlinks
+
+# Test just fonts
+source scripts/detect_os.sh
+detect_os
+source scripts/fonts.sh
+install_fonts
+```
+
+## Benefits of This Approach
+
+### ✅ Pros:
+- **Modular**: Each script has a single responsibility
+- **Testable**: Can run individual modules independently
+- **Readable**: ~60 lines per module vs 285 lines in one file
+- **Maintainable**: Easy to find and update specific functionality
+- **Reusable**: Can call individual functions from other scripts
+- **Clear separation**: OS-specific vs cross-platform code is obvious
+
+### ⚠️ Cons:
+- More files to manage (7 files vs 1)
+- Requires sourcing scripts (slight overhead)
+- Need to keep `install.sh` in sync if you keep both
+
+## Adding New Functionality
+
+### To add a new package:
+1. Edit appropriate script:
+   - Both platforms: `packages_common.sh`
+   - macOS only: `packages_macos.sh`
+   - Linux only: `packages_linux.sh`
+
+### To add a new symlink:
+1. Edit `scripts/symlinks.sh`
+2. Add to appropriate array (`files`, `configs`, or `config_files`)
+
+### To add a new script module:
+1. Create `scripts/new_module.sh`
+2. Add function: `do_something() { ... }`
+3. Source it in `install_modular.sh`
+4. Call function in `main()` function
+
+## Testing
+
+Test on a fresh system or Docker container:
+```bash
+# Ubuntu
+docker run -it --rm -v ~/dotfiles:/dotfiles ubuntu:latest bash
+cd /dotfiles && ./install_modular.sh
+
+# macOS (on actual Mac)
+# Create new user account or VM
+```
+
+# Setup New Machine
 
 This is my personal guide to setting up a new machine. It includes all the necessary steps and configurations to get necessary tools and environments up and running quickly.
 
@@ -18,18 +109,6 @@ This is my personal guide to setting up a new machine. It includes all the neces
   - Configure global username and email
     - `git config --global user.name "Your Name"`
     - `git config --global user.email "your.email@example.com"`
-- Install Homebrew
-  - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-  - 
-- Install Node Version Manager (nvm)
-  - sudo or brew install nvm
-
-- Install UV
-  - `curl -LsSf https://astral.sh/uv/install.sh | sh`
-- Install ruffn
-  - `uv tool install ruff@latest`
-- Install pre-commit
-  - `uv tool install pre-commit@latest`
 
 - Install VSCode
   - Install extensions
@@ -42,52 +121,3 @@ This is my personal guide to setting up a new machine. It includes all the neces
   - cursor speed
   - trackpad settings
   - keyboard repeat rate
-
-- zsh or bash setup
-  - add to whichever shell is on the machine
-  - add alias
-    - `alias ll='ls -la'`
-    - `alias gs='git status'`
-    - `alias gp='git pull'`
-    - `alias gc='git commit'`
-    - `alias gco='git checkout'`
-    - `alias gcm='git commit -m'`
-    - `alias ..='cd ..'`
-    - `alias ...='cd ../..'`
-    - `alias c='clear'`
-- Set up prompt theme
-
-- create `bin` directory in home and add to PATH
-  - `mkdir ~/bin`
-  - add to bashrc or zshrc: `export PATH="$HOME/bin:$PATH"`
-  - symlink custom scripts here for easy access
-
-
-
-### notes 
-
-- .zprofile?
-
-.zprofile and `.bash_profile` are **login shell** configuration files. Here's when you'd want them:
-
-**Purpose:**
-- Run **once** when you log in (not for every new terminal window)
-- Set up environment variables that should be available to all programs
-- Configure PATH, system-wide settings, one-time initialization
-
-**When they're loaded:**
-- `.bash_profile` / .zprofile: Login shells (SSH login, initial terminal on macOS)
-- .bashrc / .zshrc: Interactive non-login shells (every new terminal window/tab)
-
-**Common use cases:**
-- **PATH modifications** that should persist across all sessions
-- **Environment variables** (API keys, default editors, language settings)
-- **Starting SSH agents** or other background services once per login
-- **macOS specific**: Terminal.app opens login shells by default, so .zprofile is often needed
-
-**Do you need them?**
-- **On Linux**: Usually not essential - most distros source .bashrc from `.bash_profile` already
-- **On macOS**: More important - you might need .zprofile to set PATH and environment variables
-- **Modern approach**: Many people put everything in .zshrc/.bashrc and skip the profile files
-
-**For your dotfiles:** If you're keeping things simple and cross-platform, you might not need them. But if you have environment setup that should only run once per login session (not per terminal), they're useful.
