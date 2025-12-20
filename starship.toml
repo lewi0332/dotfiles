@@ -72,7 +72,7 @@ format = "[ $symbol ]($style)"
 
 [os.symbols]
 Macos = "  "
-Linux = ""
+Linux = "\ue712"
 Windows = "󰍲"
 Ubuntu = ""
-Pop = ""
+Pop = "\ue712"
