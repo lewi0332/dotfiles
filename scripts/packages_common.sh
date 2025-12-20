@@ -49,16 +49,30 @@ install_common_packages() {
     else
         echo "UV not found. Installing UV..."
         curl -LsSf https://astral.sh/uv/install.sh | sh
+        
+        # Add UV to PATH for current session
+        export PATH="$HOME/.local/bin:$PATH"
+        
+        # Verify installation
+        if command -v uv &> /dev/null; then
+            echo "✅ UV installed successfully."
+        else
+            echo "⚠️  UV installation may require shell restart. Try: source ~/.zshrc"
+        fi
     fi
 
     # Install Ruff via UV
     echo "Checking for Ruff installation..."
-    if uv tool list | grep -q "^ruff "; then
-        echo "Ruff is already installed. Updating to latest version..."
-        uv tool upgrade ruff
+    if command -v uv &> /dev/null; then
+        if uv tool list | grep -q "^ruff "; then
+            echo "Ruff is already installed. Updating to latest version..."
+            uv tool upgrade ruff
+        else
+            echo "Ruff not found. Installing Ruff..."
+            uv tool install ruff@latest
+        fi
     else
-        echo "Ruff not found. Installing Ruff..."
-        uv tool install ruff@latest
+        echo "⚠️  UV not available. Skipping Ruff installation. Run script again after sourcing shell config."
     fi
 
     echo "UV and Ruff installation complete!"
