@@ -41,6 +41,16 @@ install_common_packages() {
         echo "tmux is already installed."
     fi
 
+    # Install TPM (Tmux Plugin Manager)
+    echo "Checking for TPM installation..."
+    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+        echo "TPM not found. Installing TPM..."
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+        echo "✅ TPM installed. Run 'Ctrl+Space I' inside tmux to install plugins."
+    else
+        echo "TPM is already installed."
+    fi
+
     # Install fzf
     echo "Checking for fzf installation..."
     if ! command -v fzf &> /dev/null; then

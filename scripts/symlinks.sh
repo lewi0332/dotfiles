@@ -8,7 +8,7 @@ create_symlinks() {
     local dotfiledir="${HOME}/dotfiles"
     
     # list of files/folders to symlink in home directory
-    local files=(zshrc zprompt shared_prompt aliases)
+    local files=(zshrc zprompt shared_prompt aliases tmux.conf)
     
     # change to the dotfiles directory
     echo "Changing to the ${dotfiledir} directory"
