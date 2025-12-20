@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Common package installation (cross-platform)
+
+install_common_packages() {
+    echo "=== Installing Common Packages ==="
+    
+    # Install zsh
+    echo "Checking for zsh installation..."
+    if ! command -v zsh &> /dev/null; then
+        echo "zsh not found. Installing zsh..."
+        if [[ "$OS" == "macos" ]]; then
+            brew install zsh
+        else
+            sudo apt update
+            sudo apt install -y zsh
+        fi
+    else
+        echo "zsh is already installed."
+    fi
+
+    # Set zsh as default shell
+    if [[ "$SHELL" != *"zsh"* ]]; then
+        echo "Setting zsh as the default shell..."
+        chsh -s "$(which zsh)"
+        echo "zsh is now the default shell. You may need to log out and back in for this to take effect."
+    else
+        echo "zsh is already the default shell."
+    fi
+
+    # Install tmux
+    echo "Checking for tmux installation..."
+    if ! command -v tmux &> /dev/null; then
+        echo "tmux not found. Installing tmux..."
+        if [[ "$OS" == "macos" ]]; then
+            brew install tmux
+        else
+            sudo apt update
+            sudo apt install -y tmux
+        fi
+    else
+        echo "tmux is already installed."
+    fi
+
+    # Install UV (Python package manager)
+    echo "Checking for UV installation..."
+    if command -v uv &> /dev/null; then
+        echo "UV is already installed. Updating to latest version..."
+        uv self update
+    else
+        echo "UV not found. Installing UV..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+    fi
+
+    # Install Ruff via UV
+    echo "Checking for Ruff installation..."
+    if uv tool list | grep -q "^ruff "; then
+        echo "Ruff is already installed. Updating to latest version..."
+        uv tool upgrade ruff
+    else
+        echo "Ruff not found. Installing Ruff..."
+        uv tool install ruff@latest
+    fi
+
+    echo "UV and Ruff installation complete!"
+}
