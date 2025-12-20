@@ -47,6 +47,7 @@ brew cleanup
 
 # Define an array of packages to install using Homebrew.
 packages=(
+    "neovim"
     "node"
     "nvm"
     "pipx"

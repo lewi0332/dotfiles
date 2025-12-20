@@ -86,6 +86,22 @@ else
     echo "tmux is already installed."
 fi
 
+# Install neovim (Linux only - macOS handled by brew.sh)
+if [[ "$OS" == "linux" ]]; then
+    echo "Checking for neovim installation..."
+    if ! command -v nvim &> /dev/null; then
+        echo "neovim not found. Installing neovim from unstable PPA..."
+        sudo apt update
+        sudo apt install -y software-properties-common
+        sudo add-apt-repository -y ppa:neovim-ppa/unstable
+        sudo apt update
+        sudo apt install -y neovim
+    else
+        echo "neovim is already installed."
+    fi
+fi
+
+
 if [[ "$OS" == "linux" ]]; then
     echo "Checking for lazygit installation..."
     if ! command -v lazygit &> /dev/null; then
