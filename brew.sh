@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-#TODO: adjust path between linux and mac.
-#TODO: decide if this is the right list of packages for brew to handle.
-
-
-
 # Install Homebrew if it isn't already installed
 if ! command -v brew &>/dev/null; then
     echo "Homebrew not installed. Installing Homebrew."
@@ -144,13 +139,6 @@ for font in "${fonts[@]}"; do
         brew install --cask "$font"
     fi
 done
-
-# Once fonts are installed, import your Terminal Profile
-echo "Import your terminal settings..."
-echo "Terminal -> Settings -> Profiles -> Import..."
-echo "Import from ${HOME}/dotfiles/settings/CMS.terminal"
-echo "Press enter to continue..."
-read
 
 # Update and clean up again for safe measure
 brew update

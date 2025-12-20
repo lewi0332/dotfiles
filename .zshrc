@@ -58,7 +58,7 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-export PATH="$HOME/.cargo/bin:$HOME/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/bin:$PATH"
 
 export NVIM_APPNAME="kickstart"
 
