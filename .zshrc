@@ -39,10 +39,9 @@ source "${ZINIT_HOME}/zinit.zsh"
 
 
 # Load dotfiles:
-for file in ~/.{aliases}; do
-    [ -r "$file" ] && [ -f "$file" ] && source "$file"
-done
-unset file
+if [ -f ~/.aliases ]; then
+    source ~/.aliases
+fi
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
