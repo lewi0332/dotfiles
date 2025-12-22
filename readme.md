@@ -121,3 +121,10 @@ This is my personal guide to setting up a new machine. It includes all the neces
   - cursor speed
   - trackpad settings
   - keyboard repeat rate
+
+
+### TMUX 
+
+After installing... The tmux plugins need to be installed manually the first time.
+- Launch tmux: `tmux`
+- Press `prefix` + `I` (capital i, as in Install) to fetch the plugins.
