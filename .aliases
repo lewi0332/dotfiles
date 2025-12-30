@@ -41,3 +41,4 @@ alias l='ls -CF'
 
 alias python=python3
 alias vim=nvim
+alias -s html=open 
