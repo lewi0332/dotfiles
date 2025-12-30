@@ -119,3 +119,34 @@ fi
 
 # zoxide - smart cd
 command -v zoxide &> /dev/null && eval "$(zoxide init --cmd cd zsh)"
+
+# To merge hooks, use add-zsh-hook
+autoload -Uz add-zsh-hook
+
+
+# Then Define separate functions
+function auto_venv() {
+  # If already in a virtualenv, do nothing
+  if [[ -n "$VIRTUAL_ENV" && ! -f "$VIRTUAL_ENV/bin/activate" ]]; then
+    deactivate
+  fi
+
+  [[ -n "$VIRTUAL_ENV" ]] && return
+
+  local dir="$PWD"
+  while [[ "$dir" != "/" ]]; do
+    if [[ -f "$dir/.venv/bin/activate" ]]; then
+      source "$dir/.venv/bin/activate"
+      return
+    fi
+    dir="${dir:h}"
+  done
+}
+
+function auto_ls() {
+   ls
+}
+
+# Register them all
+add-zsh-hook chpwd auto_venv
+add-zsh-hook chpwd auto_ls
