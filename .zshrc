@@ -150,3 +150,6 @@ function auto_ls() {
 # Register them all
 add-zsh-hook chpwd auto_venv
 add-zsh-hook chpwd auto_ls
+
+# Source machine-specific configs (preserved from existing .zshrc on new machines)
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
