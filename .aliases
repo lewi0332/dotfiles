@@ -41,4 +41,23 @@ alias l='ls -CF'
 
 alias python=python3
 alias vim=nvim
-alias -s html=open 
+alias -s html=open
+alias -s png=open
+alias -s jpg=open
+alias -s jpeg=open
+alias -s gif=open
+alias -s pdf=open
+
+csv_preview(){
+    local max_rows=1000
+    local file_size=$(wc -l < "$1" 2>/dev/null || echo "unknown")
+
+    if [ "$file_size" -gt 10000 ]; then
+        echo "Large CSV here ($file_size rows), limiting to $max_rows"
+        visidata --max-rows "$max_rows" "$1"
+    else
+        visidata "$1"
+    fi
+}
+
+alias -s csv=csv_preview

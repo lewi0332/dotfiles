@@ -127,5 +127,18 @@ install_common_packages() {
         echo "⚠️  UV not available. Skipping pre-commit installation. Run script again after sourcing shell config."
     fi
 
-    echo "UV, Ruff, and pre-commit installation complete!"
+    # Install Visidata via UV
+    echo "Checking for Visidata installation..."
+    if command -v uv &> /dev/null; then
+        if uv tool list | grep -q "^visidata "; then
+            echo "Visidata is already installed. Updating to latest version..."
+            uv tool upgrade visidata
+        else
+            echo "Visidata not found. Installing visidata..."
+            uv tool install visidata@latest
+        fi
+    else
+        echo "⚠️  UV not available. Skipping Visidata installation. Run script again after sourcing shell config."
+    fi
+    echo "UV, Ruff, pre-commit, and Visidata installation complete!"
 }
