@@ -49,6 +49,7 @@ packages=(
     "ripgrep"
     #'gh.'
     "lazygit"
+    "opencode"
 )
 
 # Loop over the array to install each application.

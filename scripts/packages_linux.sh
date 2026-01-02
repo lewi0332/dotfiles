@@ -18,14 +18,23 @@ install_linux_packages() {
     fi
 
     # # Install lazygit
-    # echo "Checking for lazygit installation..."
-    # if ! command -v lazygit &> /dev/null; then
-    #     echo "lazygit not found. Installing lazygit..."
-    #     sudo apt update
-    #     sudo apt install -y lazygit
-    # else
-    #     echo "lazygit is already installed."
-    # fi
+    echo "Checking for lazygit installation..."
+    if ! command -v lazygit &> /dev/null; then
+        echo "lazygit not found. Installing lazygit..."
+        if sudo apt install -y lazygit 2>/dev/null; then
+            echo "✅ lazygit installed via apt."
+        else
+            echo "apt install failed, installing from GitHub..."
+            LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+            curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+            tar xf lazygit.tar.gz lazygit
+            sudo install lazygit /usr/local/bin
+            rm lazygit lazygit.tar.gz
+            echo "✅ lazygit installed from GitHub."
+        fi
+    else
+        echo "lazygit is already installed."
+    fi
     
     # Install starship via official installer
     echo "Checking for starship installation..."
