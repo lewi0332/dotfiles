@@ -98,6 +98,9 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+
+vim.opt.whichwrap = '<,>,h,l,[,]'
+
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -204,6 +207,10 @@ vim.keymap.set('n', '<M-u>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+
+-- move lines
+vim.keymap.set('v', '<M-up>', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', '<M-down>', ":m '<-2<CR>gv=gv")
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
