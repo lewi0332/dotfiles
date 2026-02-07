@@ -6,6 +6,33 @@ import dataframe_image as dfi
 # https://github.com/dexplo/dataframe_image
 
 
+
+
+# Cleaner groupby syntax    
+df.groupby("country", as_index=False).agg(
+    total_revenue=("revenue", "sum"),
+    avg_price=("price", "mean"),
+)
+
+
+# Use pyarrow
+df = pd.read_csv('big_csv.csv', engine='pyarrow')
+
+
+# To numeric
+df["price"] = (
+    df["price"]
+    .str.replace(",", ".", regex=False)
+    .pipe(pd.to_numeric, errors="coerce")
+    .astype("Float64")
+)
+
+# Pandas 3.0 formatting examples
+
+
+
+
+
 # simulated data for widget A
 df_a = pd.DataFrame(
     {
