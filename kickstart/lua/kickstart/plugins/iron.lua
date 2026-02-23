@@ -55,28 +55,12 @@ return {
         ignore_blank_lines = true,
       }
 
-      -- VisiData popup keybinding with picker
+      -- VisiData popup keybinding with picker (uses %vd magic)
       vim.keymap.set('n', '<space>tv', function()
         local tmpfile = vim.fn.stdpath('data') .. '/visidata_dfs.txt'
 
         local function open_visidata(df_name)
-          local visidata_code = string.format([[
-import pandas as pd
-import tempfile
-import subprocess
-import os
-_vd_df = get_ipython().user_ns.get('%s')
-if _vd_df is None:
-    print("DataFrame not found")
-else:
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
-        _vd_df.to_csv(f.name, index=False)
-        temp_file = f.name
-    cmd = f"tmux popup -d '{os.getcwd()}' -w 80%% -h 70%% -E 'visidata \"{temp_file}\"'"
-    subprocess.run(cmd, shell=True)
-    print("Opened %s in visidata")
-]], df_name, df_name)
-          pcall(require('iron').core.send, nil, visidata_code)
+          pcall(require('iron').core.send, nil, '%vd ' .. df_name)
         end
 
         local python_code = string.format([[
