@@ -55,40 +55,70 @@ return {
         ignore_blank_lines = true,
       }
 
-      -- VisiData popup keybinding
+      -- VisiData popup keybinding with picker
       vim.keymap.set('n', '<space>tv', function()
-        local python_code = string.format [=[
+        local tmpfile = vim.fn.stdpath('data') .. '/visidata_dfs.txt'
+
+        local function open_visidata(df_name)
+          local visidata_code = string.format([[
 import pandas as pd
 import tempfile
 import subprocess
 import os
-_dfs = {k: v for k, v in get_ipython().user_ns.items() if isinstance(v, pd.DataFrame)}
-if not _dfs:
-    print("No DataFrames found in namespace")
-elif len(_dfs) == 1:
-    _vd_df = list(_dfs.values())[0]
-    _vd_name = list(_dfs.keys())[0]
+_vd_df = get_ipython().user_ns.get('%s')
+if _vd_df is None:
+    print("DataFrame not found")
 else:
-    print("Available DataFrames: " + ", ".join(sorted(_dfs.keys())))
-    _vd_name = input("Enter DataFrame name (or press Enter for last): ").strip()
-    if not _vd_name:
-        _vd_name = sorted(_dfs.keys())[-1]
-    _vd_df = _dfs.get(_vd_name)
-    if _vd_df is None:
-        print(f"DataFrame '{_vd_name}' not found")
-        raise SystemExit
-with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
-    _vd_df.to_csv(f.name, index=False)
-    temp_file = f.name
-cmd = f"tmux popup -d '{os.getcwd()}' -w 80%% -h 70%% -E 'visidata \"{temp_file}\"'"
-subprocess.run(cmd, shell=True)
-print(f"Opened {_vd_name} in visidata popup")
-]=]
-        local ok, err = pcall(require('iron').core.send, nil, python_code)
-        if not ok then
-          print('Error: ' .. err .. ' - Make sure REPL is open with <space>rr')
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+        _vd_df.to_csv(f.name, index=False)
+        temp_file = f.name
+    cmd = f"tmux popup -d '{os.getcwd()}' -w 80%% -h 70%% -E 'visidata \"{temp_file}\"'"
+    subprocess.run(cmd, shell=True)
+    print("Opened %s in visidata")
+]], df_name, df_name)
+          pcall(require('iron').core.send, nil, visidata_code)
         end
-      end, { desc = 'Open DataFrame in visidata popup' })
+
+        local python_code = string.format([[
+import pandas as pd
+_dfs = [k for k, v in get_ipython().user_ns.items() if isinstance(v, pd.DataFrame) and not k.startswith('_')]
+with open('%s', 'w') as f:
+    f.write(','.join(sorted(_dfs)))
+print("DataFrames: " + ', '.join(sorted(_dfs)))
+]], tmpfile)
+
+        pcall(require('iron').core.send, nil, python_code)
+
+        vim.defer_fn(function()
+          local handle = io.open(tmpfile, 'r')
+          if handle then
+            local content = handle:read('*a')
+            handle:close()
+            os.remove(tmpfile)
+
+            if content and content ~= "" then
+              local dfs = {}
+              for df in content:gmatch("[^,]+") do
+                table.insert(dfs, df)
+              end
+
+              if #dfs == 1 then
+                open_visidata(dfs[1])
+              else
+                vim.ui.select(dfs, { prompt = 'Select DataFrame:' }, function(choice)
+                  if choice then
+                    open_visidata(choice)
+                  end
+                end)
+              end
+            else
+              print('No DataFrames found in namespace')
+            end
+          else
+            print('Could not read DataFrame list')
+          end
+        end, 500)
+      end, { desc = 'Open DataFrame in visidata' })
 
       -- Custom keymap to focus REPL window
       vim.keymap.set('n', '<space>rf', function()
@@ -151,26 +181,26 @@ print(f"Opened {_vd_name} in visidata popup")
 
           local python_code = string.format(
             [[
-		import pandas as pd
-		import tempfile
-		import subprocess
-		import os
-		_vd_df = get_ipython().user_ns.get('%s')
-		if _vd_df is None:
-		    print("Error: '%s' not found in namespace")
-		elif not isinstance(_vd_df, pd.DataFrame):
-		    print("Error: '%s' is not a pandas DataFrame")
-		else:
-		    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
-			_vd_df.to_csv(f.name, index=False)
-			temp_file = f.name
-		    
-		    subprocess.run(
-			'tmux popup -d "' .. os.getcwd() .. '" -w 80%% -h 70%% -E "env -i HOME=$HOME PATH=$PATH TERM=$TERM visidata \\"' .. temp_file .. '\\""',
-			shell=True
-		    )
-		    print(f"Opened in visidata popup")
-		]],
+      import pandas as pd
+      import tempfile
+      import subprocess
+      import os
+      _vd_df = get_ipython().user_ns.get('%s')
+      if _vd_df is None:
+        print("Error: '%s' not found in namespace")
+      elif not isinstance(_vd_df, pd.DataFrame):
+        print("Error: '%s' is not a pandas DataFrame")
+      else:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+          _vd_df.to_csv(f.name, index=False)
+          temp_file = f.name
+
+        subprocess.run(
+          'tmux popup -d "' .. os.getcwd() .. '" -w 80%% -h 70%% -E "env -i HOME=$HOME PATH=$PATH TERM=$TERM visidata \\"' .. temp_file .. '\\""',
+          shell=True
+        )
+        print(f"Opened in visidata popup")
+      ]],
             var_name,
             var_name
           )
