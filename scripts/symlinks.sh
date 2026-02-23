@@ -86,4 +86,21 @@ create_symlinks() {
             echo "✅ Created symlink: $target -> $source"
         fi
     done
+
+    # create IPython startup symlink for vd popup magic
+    local ipython_startup_dir="${HOME}/.ipython/profile_default/startup"
+    local vd_source="${dotfiledir}/scripts/vd_popup.py"
+    local vd_target="${ipython_startup_dir}/vd_popup.py"
+
+    mkdir -p "${ipython_startup_dir}"
+
+    echo "Creating IPython startup symlink..."
+    if [ -L "$vd_target" ]; then
+        echo "$vd_target already exists as a symlink."
+    elif [ -e "$vd_target" ]; then
+        echo "⚠️  $vd_target already exists as a regular file. Skipping."
+    else
+        ln -s "$vd_source" "$vd_target"
+        echo "✅ Created symlink: $vd_target -> $vd_source"
+    fi
 }
