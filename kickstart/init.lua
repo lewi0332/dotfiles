@@ -98,6 +98,13 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- trying to get insert cursor _after_ char
+vim.opt.guicursor = {
+  'n-v-c:block', -- Normal, visual, command mode: block cursor
+  'i-ci-ve:ver25', --Insert, command-insert, visual-exclude: vertical bar
+  'r-cr-o:hor20', --Replace, command-replace, operator-pending: horizontal
+  'a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor', --blink settings
+}
 
 vim.opt.whichwrap = '<,>,h,l,[,]'
 
@@ -135,7 +142,7 @@ vim.o.smartcase = true
 vim.o.signcolumn = 'yes'
 
 -- Decrease update time
-vim.o.updatetime = 250
+vim.o.updatetime = 1000
 
 -- Decrease mapped sequence wait time
 vim.o.timeoutlen = 300
@@ -162,7 +169,7 @@ vim.o.inccommand = 'split'
 vim.o.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 10
+-- vim.o.scrolloff = 5
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -354,6 +361,7 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>o', group = '[O]bsidian' },
       },
     },
   },
@@ -983,6 +991,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.obsidian',
   require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
