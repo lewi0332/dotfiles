@@ -87,6 +87,31 @@ create_symlinks() {
         fi
     done
 
+    # create symlink for bin directory
+    echo "Creating bin directory symlink..."
+    local bin_source="${dotfiledir}/bin"
+    local bin_target="${HOME}/bin"
+
+    if [ -L "$bin_target" ]; then
+        echo "$bin_target already exists as a symlink."
+    elif [ -e "$bin_target" ]; then
+        echo "⚠️  $bin_target already exists. Merging scripts..."
+        # Create symlinks for individual scripts if ~/bin exists
+        for script in "${bin_source}"/*; do
+            local script_name=$(basename "$script")
+            local script_target="${bin_target}/${script_name}"
+            if [ -L "$script_target" ] || [ -e "$script_target" ]; then
+                echo "  ${script_name} already exists, skipping."
+            else
+                ln -s "$script" "$script_target"
+                echo "  ✅ Created symlink: ${script_name}"
+            fi
+        done
+    else
+        ln -s "$bin_source" "$bin_target"
+        echo "✅ Created symlink: $bin_target -> $bin_source"
+    fi
+
     # create IPython startup symlink for vd popup magic
     local ipython_startup_dir="${HOME}/.ipython/profile_default/startup"
     local vd_source="${dotfiledir}/scripts/vd_popup.py"
