@@ -32,6 +32,18 @@ return {
     
     -- Delete current file
     { "<leader>odd", "<cmd>!rm '%:p'<cr><cmd>bd<cr>", desc = "[O]bsidian: [D]elete file" },
+    
+    -- Follow markdown/wiki links (overrides default gf)
+    { "gf", function()
+        if require("obsidian").util.cursor_on_markdown_link() then
+          return "<cmd>ObsidianFollowLink<cr>"
+        else
+          return "gf"
+        end
+      end, desc = "[O]bsidian: Follow link", expr = true },
+    
+    -- Toggle checkboxes
+    { "<leader>ti", "<cmd>ObsidianToggleCheckbox<cr>", desc = "[T]oggle checkbox" },
   },
 
   ---@module 'obsidian'
@@ -49,7 +61,10 @@ return {
     notes_subdir = "inbox",
     new_notes_location = "notes_subdir",
 
-    disable_frontmatter = true,
+    -- Disable frontmatter (using new API)
+    frontmatter = {
+      enabled = false,
+    },
 
     templates = {
       subdir = "templates",
@@ -73,34 +88,15 @@ return {
       return current_date .. "_" .. suffix
     end,
 
-    -- Key mappings
-    mappings = {
-      -- Overrides 'gf' to work on markdown/wiki links within your vault
-      ["gf"] = {
-        action = function()
-          return require("obsidian").util.gf_passthrough()
-        end,
-        opts = { noremap = false, expr = true, buffer = true },
-      },
-      -- Toggle check-boxes with <leader>ti
-      ["<leader>ti"] = {
-        action = function()
-          return require("obsidian").util.toggle_checkbox()
-        end,
-        opts = { buffer = true },
-      },
-    },
-
     -- Completion settings
     completion = {
       nvim_cmp = true,
       min_chars = 2,
     },
 
-    -- UI settings - minimal styling, rely on treesitter for markdown
+    -- Disable UI enhancements (rely on treesitter for markdown styling)
     ui = {
-      checkboxes = {},
-      bullets = {},
+      enable = false,
     },
   },
 }
