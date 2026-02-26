@@ -122,6 +122,24 @@ This is my personal guide to setting up a new machine. It includes all the neces
   - trackpad settings
   - keyboard repeat rate
 
+- if in the future, I want to add completion for names and links in obsidian:
+  ```
+    {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+    },
+    config = function()
+      local cmp = require('cmp')
+      cmp.setup({
+        -- Add your cmp configuration here
+      })
+    end,
+  }
+  ```
+
 
 ### TMUX 
 

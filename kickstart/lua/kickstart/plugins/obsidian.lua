@@ -88,11 +88,8 @@ return {
       return current_date .. "_" .. suffix
     end,
 
-    -- Completion settings
-    completion = {
-      nvim_cmp = true,
-      min_chars = 2,
-    },
+    -- Completion will use blink.cmp automatically (checked before nvim-cmp)
+    -- No completion config needed - blink.cmp is detected automatically!
 
     -- Disable UI enhancements (rely on treesitter for markdown styling)
     ui = {
