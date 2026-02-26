@@ -12,7 +12,7 @@ return {
     { "<leader>oo", "<cmd>cd ~/Documents/Obsidian\\ Vault<cr>", desc = "[O]bsidian: Navigate to vault" },
     
     -- Convert note to template and remove leading whitespace
-    { "<leader>on", "<cmd>ObsidianTemplate note<cr> <cmd>lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>", desc = "[O]bsidian: Apply [N]ote template" },
+    { "<leader>on", "<cmd>Obsidian template note<cr> <cmd>silent! lua vim.cmd([[1,/^\\S/s/^\\n\\{1,}//]])<cr>", desc = "[O]bsidian: Apply [N]ote template" },
     
     -- Strip date from note title and replace dashes with spaces (cursor must be on title)
     { "<leader>of", "<cmd>s/\\(# \\)[^_]*_/\\1/ | s/-/ /g<cr>", desc = "[O]bsidian: [F]ormat title" },
@@ -36,14 +36,14 @@ return {
     -- Follow markdown/wiki links (overrides default gf)
     { "gf", function()
         if require("obsidian").util.cursor_on_markdown_link() then
-          return "<cmd>ObsidianFollowLink<cr>"
+          return "<cmd>Obsidian follow_link<cr>"
         else
           return "gf"
         end
-      end, desc = "[O]bsidian: Follow link", expr = true },
+      end, desc = "[O]bsidian: Follow link", expr = true, buffer = true },
     
     -- Toggle checkboxes
-    { "<leader>ti", "<cmd>ObsidianToggleCheckbox<cr>", desc = "[T]oggle checkbox" },
+    { "<leader>ti", "<cmd>Obsidian toggle_checkbox<cr>", desc = "[T]oggle checkbox", buffer = true },
   },
 
   ---@module 'obsidian'
