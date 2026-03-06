@@ -13,12 +13,14 @@ return {
             --   block_dividers = { '# %%', '#%%' },
             -- },
             python = {
-              command = function()
-                local venv = vim.env.VIRTUAL_ENV
-                if venv and venv ~= '' then
-                  return { venv .. '/bin/ipython' }
+              command = function(meta)
+                local dir = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(meta.current_bufnr), ':p:h')
+                if dir == '' then
+                  dir = vim.fn.getcwd()
                 end
-                return { 'ipython' }
+                local venv = vim.env.VIRTUAL_ENV
+                local ipython = (venv and venv ~= '') and (venv .. '/bin/ipython') or 'ipython'
+                return { 'sh', '-c', 'cd ' .. vim.fn.shellescape(dir) .. ' && ' .. ipython }
               end,
               format = require('iron.fts.common').bracketed_paste,
               block_dividers = { '# %%', '#%%' },
@@ -48,7 +50,7 @@ return {
           toggle_repl_with_cmd_1 = '<space>rh',
           toggle_repl_with_cmd_2 = '<space>rv',
           interrupt = '<space>s<space>',
-          exit = '<space>sq',
+          -- exit = '<space>sq', -- overridden below to send exit() instead of Ctrl-D
           clear = '<space>cl',
         },
         highlight = { italic = true },
@@ -103,6 +105,11 @@ print("DataFrames: " + ', '.join(sorted(_dfs)))
           end
         end, 500)
       end, { desc = 'Open DataFrame in visidata' })
+
+      -- Custom keymap to focus REPL window
+      vim.keymap.set('n', '<space>sq', function()
+        require('iron.core').send(nil, { 'exit()' })
+      end, { desc = 'Exit REPL' })
 
       -- Custom keymap to focus REPL window
       vim.keymap.set('n', '<space>rf', function()
