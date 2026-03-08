@@ -151,7 +151,7 @@ vim.o.signcolumn = 'yes'
 vim.o.updatetime = 1000
 
 -- Decrease mapped sequence wait time
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 1000
 
 -- Configure how new splits should be opened
 vim.o.splitright = false
@@ -826,7 +826,11 @@ require('lazy').setup({
           --   end,
           -- },
         },
-        opts = {},
+        config = function()
+          require('luasnip.loaders.from_lua').lazy_load {
+            paths = { vim.fn.stdpath 'config' .. '/lua/custom/snippets' },
+          }
+        end,
       },
       'folke/lazydev.nvim',
     },
