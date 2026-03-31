@@ -93,6 +93,9 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- Neovim host Python for remote plugins (e.g., molten-nvim)
+-- -- vim.g.python3_host_prog = vim.fn.expand('~/.venvs/nvim/bin/python')
+
 -- [[ Setting options ]]
 
 vim.o.tabstop = 4 -- Number of spaces a tab counts for
@@ -105,14 +108,17 @@ vim.o.expandtab = true -- Use spaces instead of tabs
 --  For more options, you can see `:help option-list`
 
 -- trying to get insert cursor _after_ char
-vim.opt.guicursor = {
-  'n-v-c:block', -- Normal, visual, command mode: block cursor
-  'i-ci-ve:ver25', --Insert, command-insert, visual-exclude: vertical bar
-  'r-cr-o:hor20', --Replace, command-replace, operator-pending: horizontal
-  'a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor', --blink settings
-}
+-- vim.opt.guicursor = {
+--  'n-v-c:block', -- Normal, visual, command mode: block cursor
+--  'i-ci-ve:ver25', --Insert, command-insert, visual-exclude: vertical bar
+--  'r-cr-o:hor20', --Replace, command-replace, operator-pending: horizontal
+--  'a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor', --blink settings
+--}
 
 vim.opt.whichwrap = '<,>,h,l,[,]'
+
+
+vim.opt.startofline = true
 
 -- Make line numbers default
 vim.o.number = true
@@ -268,6 +274,9 @@ rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+
+  -- Jupyter notebook support with molten-nvim
+  -- { 'benlubas/molten-nvim', version = '^1.0.0' },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -428,11 +437,12 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          mappings = {
+            n = { ['<c-d>'] = require('telescope.actions').delete_buffer },
+            i = { ['<c-d>'] = require('telescope.actions').delete_buffer },
+          },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = {
@@ -1003,7 +1013,8 @@ require('lazy').setup({
   -- require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.obsidian',
   require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  -- require 'kickstart.plugins.molten',
+  -- -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
