@@ -3,6 +3,11 @@ return {
     'Vigemus/iron.nvim',
     config = function()
       local view = require 'iron.view'
+      local repl_open_cmds = {
+        view.split.vertical.rightbelow(),
+        view.split.rightbelow(),
+      }
+
       require('iron.core').setup {
         config = {
           scratch_repl = true,
@@ -19,8 +24,33 @@ return {
                   dir = vim.fn.getcwd()
                 end
                 local venv = vim.env.VIRTUAL_ENV
-                local ipython = (venv and venv ~= '') and (venv .. '/bin/ipython') or 'ipython'
-                return { 'sh', '-c', 'cd ' .. vim.fn.shellescape(dir) .. ' && ' .. ipython }
+                local candidates = {}
+
+                if venv and venv ~= '' then
+                  table.insert(candidates, venv .. '/bin/ipython')
+                  table.insert(candidates, venv .. '/bin/python3')
+                  table.insert(candidates, venv .. '/bin/python')
+                end
+
+                vim.list_extend(candidates, { 'ipython', 'python3', 'python' })
+
+                local repl = nil
+                for _, candidate in ipairs(candidates) do
+                  if vim.fn.executable(candidate) == 1 then
+                    repl = candidate
+                    break
+                  end
+                end
+
+                repl = repl or 'python3'
+
+                local prefix = ''
+                if repl:match 'python' and not repl:match 'ipython' then
+                  -- Python 3.13+ may require this for terminal REPL behavior.
+                  prefix = 'PYTHON_BASIC_REPL=1 '
+                end
+
+                return { 'sh', '-c', 'cd ' .. vim.fn.shellescape(dir) .. ' && ' .. prefix .. vim.fn.shellescape(repl) }
               end,
               format = require('iron.fts.common').bracketed_paste,
               block_dividers = { '# %%', '#%%' },
@@ -36,10 +66,7 @@ return {
               command = { 'octave ' },
             },
           },
-          repl_open_cmd = {
-            view.split.vertical.rightbelow(),
-            view.split.rightbelow(),
-          },
+          repl_open_cmd = repl_open_cmds,
         },
         keymaps = {
           send_motion = '<space>sc',

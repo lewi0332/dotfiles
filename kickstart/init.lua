@@ -94,7 +94,7 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 
 -- Neovim host Python for remote plugins (e.g., molten-nvim)
--- -- vim.g.python3_host_prog = vim.fn.expand('~/.venvs/nvim/bin/python')
+-- vim.g.python3_host_prog = vim.fn.expand('~/.venvs/nvim/bin/python')
 
 -- [[ Setting options ]]
 
@@ -920,6 +920,7 @@ require('lazy').setup({
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
+        transparent=true,
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
