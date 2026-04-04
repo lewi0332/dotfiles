@@ -66,3 +66,4 @@ alias -s csv=csv_preview
 alias oo='cd  $HOME/Documents/Obsidian\ Vault'
 alias or='vim $HOME/Documents/Obsidian Vault/inbox/*.md'
 alias mm='cd $HOME/Documents/Data Science/Masters\ Degree'
+alias dash='/Users/derrick.lewis/data/plotly/start.sh'
