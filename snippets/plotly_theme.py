@@ -1,6 +1,29 @@
 import plotly.graph_objects as go
 import plotly.io as pio
 
+DEFAULT_SHOW_CONFIG = {
+    'modeBarButtonsToAdd': [
+        'drawline',
+        'drawopenpath',
+        'drawclosedpath',
+        'drawcircle',
+        'drawrect',
+        'eraseshape',
+    ]
+}
+
+
+def apply_default_renderer_config(renderers=None):
+    """Apply default modebar config to selected Plotly renderers."""
+    target_renderers = renderers or ['notebook', 'notebook_connected', 'vscode', 'browser']
+    available_renderers = set(pio.renderers)
+
+    for renderer_name in target_renderers:
+        if renderer_name not in available_renderers:
+            continue
+        renderer = pio.renderers[renderer_name]
+        renderer.config = {**(renderer.config or {}), **DEFAULT_SHOW_CONFIG}
+
 plotly_light = go.layout.Template(layout=go.Layout({
     'annotationdefaults': {
         'arrowcolor': '#f2f5fa',
@@ -186,3 +209,6 @@ plotly_light = go.layout.Template(layout=go.Layout({
 }))
 
 pio.templates.default = plotly_light
+
+# Apply defaults to common renderers for cleaner global fig.show behavior.
+apply_default_renderer_config()

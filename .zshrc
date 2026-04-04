@@ -58,6 +58,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/bin:$PATH"
+export PYTHONPATH="$HOME/dotfiles/python_packages${PYTHONPATH:+:$PYTHONPATH}"
 
 export NVIM_APPNAME="kickstart"
 

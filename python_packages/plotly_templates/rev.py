@@ -1,29 +1,6 @@
 import plotly.graph_objects as go
-import plotly.io as pio
 
-DEFAULT_SHOW_CONFIG = {
-    'modeBarButtonsToAdd': [
-        'drawline',
-        'drawopenpath',
-        'drawclosedpath',
-        'drawcircle',
-        'drawrect',
-        'eraseshape',
-    ]
-}
-
-def apply_default_renderer_config(renderers=None):
-    """Apply default modebar config to selected Plotly renderers."""
-    target_renderers = renderers or ['notebook', 'notebook_connected', 'vscode', 'browser']
-    available_renderers = set(pio.renderers)
-
-    for renderer_name in target_renderers:
-        if renderer_name not in available_renderers:
-            continue
-        renderer = pio.renderers[renderer_name]
-        renderer.config = {**(renderer.config or {}), **DEFAULT_SHOW_CONFIG}
-
-plotly_light = go.layout.Template(layout=go.Layout({
+plotly_rev = go.layout.Template(layout=go.Layout({
     'annotationdefaults': {
         'arrowcolor': '#f2f5fa',
         'arrowhead': 0,
@@ -49,8 +26,7 @@ plotly_light = go.layout.Template(layout=go.Layout({
                             [0.7777777777777778, '#fb9f3a'], [0.8888888888888888, '#fdca26'], [1.0, '#f0f921']]
     },
     'colorway': [
-        'rgba(0, 203, 166, 0.7)', 'rgba(168, 168, 168, 0.7)', '#19d3f3', '#00cc96', '#ab63fa', '#00CBA6', 'rgba(255, 102, 146, 0.5)',
-        '#B6E880', '#FF97FF', '#FECB52'
+        '#E55800', '#424242', '#0542D0', '#E5A101', '#E6CB05', '#12B6A9', '#14006C'
     ],
     'font': {
         'color': '#2a3f5f',
@@ -67,15 +43,12 @@ plotly_light = go.layout.Template(layout=go.Layout({
     'hoverlabel': {
         'align': 'left'
     },
-    'hovermode':
-    'closest',
+    'hovermode': 'closest',
     'mapbox': {
         'style': 'light'
     },
-    'paper_bgcolor':
-    'white',
-    'plot_bgcolor':
-    'white',
+    'paper_bgcolor': 'white',
+    'plot_bgcolor': 'white',
     'polar': {
         'angularaxis': {
             'gridcolor': '#506784',
@@ -149,9 +122,7 @@ plotly_light = go.layout.Template(layout=go.Layout({
     },
     'title': {
         'x': 0.05,
-        'font': {
-            #         'size': 24
-        }
+        'font': {}
     },
     'updatemenudefaults': {
         'bgcolor': '#506784',
@@ -164,13 +135,11 @@ plotly_light = go.layout.Template(layout=go.Layout({
         'ticks': '',
         'tickfont': {
             'family': 'Interstate Mono, Courier',
-            #                            'size': 10,
             'color': '#2a3f5f'
         },
         'title': {
             'font': {
-                #                       'size': 18,
-                'family': 'Plain'
+                'family': 'inter, arial'
             }
         },
         'zerolinecolor': '#DFE8F3',
@@ -183,12 +152,10 @@ plotly_light = go.layout.Template(layout=go.Layout({
         'ticks': '',
         'tickfont': {
             'family': 'Interstate Mono, Courier',
-            #                            'size': 10,
             'color': '#2a3f5f'
         },
         'title': {
             'font': {
-                #                       'size': 18,
                 'family': 'plain, arial'
             }
         },
@@ -207,8 +174,3 @@ plotly_light = go.layout.Template(layout=go.Layout({
         "layer": "below"
     }]
 }))
-
-pio.templates.default = plotly_light
-
-# Apply defaults to common renderers for cleaner global fig.show behavior.
-apply_default_renderer_config()
