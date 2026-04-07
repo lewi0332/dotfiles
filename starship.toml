@@ -9,10 +9,8 @@ $directory\
 $git_branch\
 $git_status\
 [](fg:#394260 bg:#212736)\
-$python
-[](fg:#212736 bg:#1d2230)\
-$time\
-[ ](fg:#1d2230)\
+$python\
+[](fg:#212736)\
 \n$character"""
 
 [directory]
@@ -37,10 +35,8 @@ style = "bg:#394260"
 format = '[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)'
 
 [python]
-format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+format = '[[ $symbol ($version) ($virtualenv) ](fg:#769ff0 bg:#212736)]($style)'
 symbol = "\ue73c"
-# "🐍"
-style = "bold yellow"
 
 [time]
 disabled = true
