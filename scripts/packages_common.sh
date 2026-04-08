@@ -135,7 +135,7 @@ install_common_packages() {
             uv tool upgrade visidata
         else
             echo "Visidata not found. Installing visidata..."
-            uv tool install visidata@latest
+            uv tool install visidata@latest --with pyarrow
         fi
     else
         echo "⚠️  UV not available. Skipping Visidata installation. Run script again after sourcing shell config."
