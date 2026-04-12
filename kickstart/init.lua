@@ -704,6 +704,7 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         pyright = {},
+        -- ruff_lsp = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -931,7 +932,7 @@ require('lazy').setup({
       vim.cmd.colorscheme 'tokyonight-night'
 
       -- Improve visual selection contrast on transparent backgrounds.
-      --vim.api.nvim_set_hl(0, 'Visual', { bg = '#3b4261', fg = '#ffffff', bold = true })
+      -- vim.api.nvim_set_hl(0, 'Visual', { bg = '#3b4261', fg = '#ffffff', bold = true })
       -- vim.api.nvim_set_hl(0, 'VisualNOS', { bg = '#3b4261', fg = '#ffffff', bold = true })
     end,
   },
@@ -1013,7 +1014,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.obsidian',
   require 'kickstart.plugins.neo-tree',

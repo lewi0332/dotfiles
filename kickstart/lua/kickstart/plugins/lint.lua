@@ -41,20 +41,42 @@ return {
       -- lint.linters_by_ft['terraform'] = nil
       -- lint.linters_by_ft['text'] = nil
 
-      -- Create autocommand which carries out the actual linting
-      -- on the specified events.
       local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
-      vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
-        group = lint_augroup,
-        callback = function()
-          -- Only run the linter in buffers that you can modify in order to
-          -- avoid superfluous noise, notably within the handy LSP pop-ups that
-          -- describe the hovered symbol using Markdown.
-          if vim.bo.modifiable then
-            lint.try_lint()
-          end
-        end,
-      })
+
+      local lint_enabled = true
+      local lint_autocmd_id = nil
+
+      local function create_lint_autocmd()
+        return vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
+          group = lint_augroup,
+          callback = function()
+            if vim.bo.modifiable then
+              lint.try_lint()
+            end
+          end,
+        })
+      end
+
+      lint_autocmd_id = create_lint_autocmd()
+
+      vim.g.toggle_lint = function()
+        if lint_enabled then
+          vim.api.nvim_del_autocmd(lint_autocmd_id)
+          lint_enabled = false
+          vim.diagnostic.enable(false)
+          vim.notify 'Linting disabled'
+        else
+          lint_autocmd_id = create_lint_autocmd()
+          lint_enabled = true
+          vim.diagnostic.enable(true)
+          lint.try_lint()
+          vim.notify 'Linting enabled'
+        end
+      end
+
+      vim.keymap.set('n', '<leader>td', function()
+        vim.g.toggle_lint()
+      end, { desc = '[T]oggle [D]iagnostics' })
     end,
   },
 }
