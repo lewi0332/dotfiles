@@ -12,7 +12,6 @@ This is a personal dotfiles repository for managing shell configurations, Neovim
 dotfiles/
 ├── scripts/          # Modular installation scripts
 ├── kickstart/        # Kickstart.nvim configuration
-├── nvim-lab/         # Custom Neovim configuration
 ├── ruff/             # Ruff Python linter configuration
 ├── snippets/         # Code snippets and reference materials
 ├── bin/              # Custom scripts (og, on)
@@ -59,7 +58,7 @@ cd /dotfiles && ./install.sh
 ### Symlink Management
 The repository creates symlinks for:
 - **Home dotfiles**: .zshrc, .zprompt, .shared_prompt, .aliases, .tmux.conf
-- **Config directories**: nvim-lab, kickstart, ruff
+- **Config directories**: kickstart, ruff
 - **Config files**: starship.toml
 
 Existing .zshrc is preserved as ~/.zshrc.local (auto-sourced by main .zshrc)
@@ -85,7 +84,6 @@ Existing .zshrc is preserved as ~/.zshrc.local (auto-sourced by main .zshrc)
 - Provide user feedback: echo status messages with ✅/⚠️ prefixes
 - Use conditional checks before creating/overwriting files
 - Change directory safely: `cd "${dir}" || exit`
-
 **Error Handling:**
 - Check if commands exist before using them
 - Validate prerequisites before operations
@@ -143,7 +141,6 @@ ruff check path/to/file.py
 ```bash
 # Format Lua files (requires stylua)
 stylua kickstart/
-stylua nvim-lab/
 ```
 
 **Style Rules:**
