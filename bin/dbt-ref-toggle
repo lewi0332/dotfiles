@@ -1,0 +1,73 @@
+#!/bin/zsh
+
+set -e
+
+DRY_RUN=false
+TO_REF=false
+
+usage() {
+  echo "Usage: $(basename "$0") [--dry-run] [--ref] <file>"
+  echo "       $(basename "$0") <file> [--dry-run] [--ref]"
+  echo ""
+  echo "Toggle dbt ref() syntax with analyticsdb.analytics prefix."
+  echo ""
+  echo "Options:"
+  echo "  --dry-run   Preview changes without writing"
+  echo "  --ref      Convert analyticsdb.analytics -> ref() (default: ref() -> analyticsdb.analytics)"
+  exit 1
+}
+
+FILE=""
+
+while [[ -n "$1" ]]; do
+  case "$1" in
+    --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    --ref)
+      TO_REF=true
+      shift
+      ;;
+    -*)
+      usage
+      ;;
+    *)
+      FILE="$1"
+      shift
+      ;;
+  esac
+done
+
+if [ -z "$FILE" ]; then
+  usage
+fi
+
+if [ ! -f "$FILE" ]; then
+  echo "Error: File not found: $FILE"
+  exit 1
+fi
+
+if [[ "$TO_REF" == true ]]; then
+  PATTERN='analyticsdb\.analytics\.(\w+)'
+  REPLACEMENT='{{ ref('\''\1'\'') }}'
+else
+  PATTERN='\{\{ ref\(["'\''](\w+)["'\'']\) ?\}\}'
+  REPLACEMENT='analyticsdb.analytics.\1'
+fi
+
+ORIGINAL=$(cat "$FILE")
+TRANSFORMED=$(echo "$ORIGINAL" | perl -pe "s/$PATTERN/$REPLACEMENT/g")
+
+if [[ "$ORIGINAL" == "$TRANSFORMED" ]]; then
+  echo "No changes needed (already in target form)"
+  exit 0
+fi
+
+if [[ "$DRY_RUN" == true ]]; then
+  echo "=== Dry run: changes would be ==="
+  echo "$TRANSFORMED"
+else
+  echo "$TRANSFORMED" > "$FILE"
+  echo "Updated: $FILE"
+fi
