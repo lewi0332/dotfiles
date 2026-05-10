@@ -4,7 +4,7 @@ return {
     cmd = 'Copilot',
     event = 'InsertEnter',
     config = function()
-      require('copilot').setup({
+      require('copilot').setup {
         panel = {
           enabled = true,
           auto_refresh = true,
@@ -15,14 +15,14 @@ return {
           hide_during_completion = true,
           keymap = {
             accept = '<Tab>',
-            accept_word = '<M-f>',
-            accept_line = '<M-CR>',
-            next = '<M-]>',
-            prev = '<M-[>',
+            --accept_word = '<M-f>',
+            accept_line = '<M-]>',
+            next = '<M-n>',
+            --prev = '<M-[>',
             dismiss = '<C-]>',
           },
         },
-      })
+      }
     end,
   },
 }

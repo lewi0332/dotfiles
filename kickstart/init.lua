@@ -986,12 +986,12 @@ require('lazy').setup({
     config = function(_, opts)
       require('nvim-treesitter').setup(opts)
       vim.api.nvim_create_autocmd('FileType', {
-        pattern = { 'python', 'sql', 'markdown', 'yaml', 'toml', 'r', 'sh', 'bash' },
+        pattern = { 'python', 'sql', 'yaml', 'toml', 'r', 'sh', 'bash' },
         callback = function() vim.treesitter.start() end,
       })
     end,
     opts = {
-      ensure_installed = { 'python', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'python', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'mermaid', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       additional_vim_regex_highlighting = { 'ruby' },
