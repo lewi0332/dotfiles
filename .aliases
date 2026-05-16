@@ -62,7 +62,7 @@ csv_preview(){
 
 alias -s csv=csv_preview
 
-alias dot='cd $HOME/dotfiles/'
+alias dots='cd $HOME/dotfiles/'
 
 # Obsidian
 alias oo='cd  $HOME/Documents/Obsidian\ Vault'
