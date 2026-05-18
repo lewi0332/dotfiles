@@ -47,6 +47,7 @@ packages=(
     "nvm"
     "pipx"
     "ripgrep"
+    "graphviz"
     #'gh.'
     "lazygit"
     "opencode"
