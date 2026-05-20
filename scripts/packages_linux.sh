@@ -44,4 +44,13 @@ install_linux_packages() {
     else
         echo "starship is already installed."
     fi
+
+    # Install graphviz
+    echo "Checking for graphviz installation..."
+    if ! command -v dot &> /dev/null; then
+        echo "graphviz not found. Installing graphviz..."
+        sudo apt install -y graphviz
+    else
+        echo "graphviz is alread installed"
+    fi
 }
