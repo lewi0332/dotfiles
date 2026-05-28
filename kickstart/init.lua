@@ -441,6 +441,10 @@ require('lazy').setup({
             n = { ['<c-d>'] = require('telescope.actions').delete_buffer },
             i = { ['<c-d>'] = require('telescope.actions').delete_buffer },
           },
+          preview = {
+            -- treesitter crashes on markdown in nvim 0.12.1 (nil range bug)
+            treesitter = false,
+          },
         },
         -- pickers = {}
         extensions = {
