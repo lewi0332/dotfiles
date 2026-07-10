@@ -133,6 +133,50 @@ print("DataFrames: " + ', '.join(sorted(_dfs)))
         end, 500)
       end, { desc = 'Open DataFrame in visidata' })
 
+      -- Send the current visual selection to `dbtvp` (dbt show --inline | visidata,
+      -- opened in a tmux popup). Lets you preview a snippet of dbt model SQL --
+      -- refs and all -- without leaving the buffer or hand-resolving ref() calls.
+      local function find_dbt_project_root(start_dir)
+        local match = vim.fs.find('dbt_project.yml', { path = start_dir, upward = true })[1]
+        return match and vim.fs.dirname(match) or nil
+      end
+
+      -- NOTE: this must be a `:<C-u>` cmdline-style mapping, not a Lua function
+      -- passed directly to vim.keymap.set. When a Visual-mode keymap's rhs is a
+      -- Lua function (or a <Cmd> mapping), Neovim doesn't commit the '< / '>
+      -- marks before invoking it, so vim.fn.line("'<"/"'>") reads either unset
+      -- (0,0) or the *previous* selection. Routing through `:` forces Neovim to
+      -- exit Visual mode and set the marks first, same as classic Vimscript
+      -- plugins that grab a visual range.
+      _G.__dbtvp_preview = function()
+        local start_line = vim.fn.line "'<"
+        local end_line = vim.fn.line "'>"
+        local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+        if #lines == 0 then
+          print 'No selection'
+          return
+        end
+
+        local sql = table.concat(lines, '\n')
+        local bufdir = vim.fn.expand '%:p:h'
+        local root = find_dbt_project_root(bufdir) or vim.fn.getcwd()
+
+        vim.fn.jobstart({ 'zsh', '-c', 'source ~/.aliases && dbtvp "$1"', '_', sql }, {
+          cwd = root,
+          detach = true,
+          on_exit = function(_, code)
+            if code ~= 0 then
+              vim.schedule(function()
+                print('dbtvp exited with code ' .. code)
+              end)
+            end
+          end,
+        })
+      end
+
+      vim.keymap.set('v', '<space>dv', ':<C-u>lua __dbtvp_preview()<CR>', { desc = 'Preview visual selection with dbtvp (visidata popup)' })
+
       -- Custom keymap to focus REPL window
       vim.keymap.set('n', '<space>sq', function()
         require('iron.core').send(nil, { 'exit()' })
