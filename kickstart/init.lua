@@ -936,8 +936,12 @@ require('lazy').setup({
       vim.cmd.colorscheme 'tokyonight-night'
 
       -- Improve visual selection contrast on transparent backgrounds.
-      -- vim.api.nvim_set_hl(0, 'Visual', { bg = '#3b4261', fg = '#ffffff', bold = true })
-      -- vim.api.nvim_set_hl(0, 'VisualNOS', { bg = '#3b4261', fg = '#ffffff', bold = true })
+      vim.api.nvim_set_hl(0, 'Visual', { bg = '#3b4261', fg = '#ffffff', bold = true })
+      vim.api.nvim_set_hl(0, 'VisualNOS', { bg = '#3b4261', fg = '#ffffff', bold = true })
+
+      -- Brighten relative line numbers; tokyonight's default (fg_gutter, #3b4261)
+      -- nearly blends into the background (#1a1b26).
+      vim.api.nvim_set_hl(0, 'LineNr', { fg = '#737aa2' })
     end,
   },
 
@@ -991,7 +995,9 @@ require('lazy').setup({
       require('nvim-treesitter').setup(opts)
       vim.api.nvim_create_autocmd('FileType', {
         pattern = { 'python', 'sql', 'yaml', 'toml', 'r', 'sh', 'bash' },
-        callback = function() vim.treesitter.start() end,
+        callback = function()
+          vim.treesitter.start()
+        end,
       })
     end,
     opts = {
