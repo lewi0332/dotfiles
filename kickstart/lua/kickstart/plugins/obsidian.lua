@@ -75,9 +75,8 @@ return {
     notes_subdir = 'inbox',
     new_notes_location = 'notes_subdir',
 
-    -- Disable frontmatter (using new API)
     frontmatter = {
-      enabled = false,
+      enabled = true,
     },
 
     templates = {
