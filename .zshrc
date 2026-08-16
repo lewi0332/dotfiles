@@ -60,6 +60,13 @@ fi
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/bin:$PATH"
 export PYTHONPATH="$HOME/dotfiles/python_packages${PYTHONPATH:+:$PYTHONPATH}"
 
+# Use the Node.js version required by Copilot when nvm is installed.
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  source "$NVM_DIR/nvm.sh"
+  nvm use --silent default >/dev/null 2>&1
+fi
+
 export NVIM_APPNAME="kickstart"
 
 unset-upstream() {
@@ -163,3 +170,4 @@ if [ -f '/Users/derrick.lewis/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/d
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/derrick.lewis/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/derrick.lewis/google-cloud-sdk/completion.zsh.inc'; fi
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

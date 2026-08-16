@@ -3,6 +3,25 @@
 
 install_linux_packages() {
     echo "=== Linux Package Installation ==="
+
+    # Install and select the Node.js version required by Copilot.
+    echo "Checking for Node.js 22 or newer..."
+    if ! command -v node &> /dev/null || [[ "$(node -p 'process.versions.node.split(".")[0]')" -lt 22 ]]; then
+        export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+        if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
+            echo "Installing nvm..."
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+        fi
+
+        # Load nvm in this installer process before installing the default runtime.
+        # shellcheck source=/dev/null
+        source "$NVM_DIR/nvm.sh"
+        nvm install 22
+        nvm alias default 22
+        nvm use 22
+    else
+        echo "Node.js $(node --version) is already installed."
+    fi
     
     # Install neovim from unstable PPA
     echo "Checking for neovim installation..."

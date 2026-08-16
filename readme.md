@@ -139,6 +139,11 @@ This is my personal guide to setting up a new machine. It includes all the neces
     end,
   }
   ```
+  
+  
+ ## Logs of Setup Actions
+ 
+ `sudo systemctl edit ollama.service`  - Added Environment vars here to direct ollama to use the Ryzen AI MAX Radeon 8060s GPU and memory
 
 
 ### TMUX 
