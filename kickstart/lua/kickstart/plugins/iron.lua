@@ -177,6 +177,158 @@ print("DataFrames: " + ', '.join(sorted(_dfs)))
 
       vim.keymap.set('v', '<space>dv', ':<C-u>lua __dbtvp_preview()<CR>', { desc = 'Preview visual selection with dbtvp (visidata popup)' })
 
+      -- `gd` on a `ref('model_name')` or `source('src', 'table')` call jumps
+      -- to that model's .sql file or the source's entry in its yml schema
+      -- file, the same way `gd`/LSP goto-definition jumps to a Python
+      -- function. Falls back to the built-in `gd` everywhere else (e.g. no
+      -- ref()/source() under the cursor, or a non-dbt sql file).
+      local function dbt_ref_under_cursor(line, col)
+        local search_start = 1
+        while true do
+          local s, e, name = line:find("ref%(%s*['\"]([%w_]+)['\"]%s*%)", search_start)
+          if not s then
+            return nil
+          end
+          if col >= s and col <= e then
+            return name
+          end
+          search_start = e + 1
+        end
+      end
+
+      local function dbt_source_under_cursor(line, col)
+        local search_start = 1
+        while true do
+          local s, e, src_name, table_name = line:find("source%(%s*['\"]([%w_]+)['\"]%s*,%s*['\"]([%w_]+)['\"]%s*%)", search_start)
+          if not s then
+            return nil
+          end
+          if col >= s and col <= e then
+            return src_name, table_name
+          end
+          search_start = e + 1
+        end
+      end
+
+      -- Scans a sources.yml-style file for `sources: -> name: <src_name> ->
+      -- tables: -> name: <table_name>` and returns the line number of the
+      -- matching table entry (or of the source entry, if the table itself
+      -- isn't found). Deliberately a lightweight indentation scan rather
+      -- than a full YAML parse -- dbt source files are consistently shaped.
+      local function scan_source_file(path, src_name, table_name)
+        local lines = vim.fn.readfile(path)
+        local in_sources = false
+        local source_item_indent = nil
+        local current_source_matches = false
+        local source_line = nil
+
+        for i, line in ipairs(lines) do
+          local top_indent, top_key = line:match '^(%s*)(%a[%w_]*):%s*$'
+          if top_indent and #top_indent == 0 then
+            in_sources = top_key == 'sources'
+          end
+
+          if in_sources then
+            local indent, name = line:match "^(%s*)%-%s*name:%s*['\"]?([%w_%.%-]+)"
+            if indent and name then
+              if source_item_indent == nil then
+                source_item_indent = #indent
+              end
+              if #indent == source_item_indent then
+                current_source_matches = name == src_name
+                if current_source_matches then
+                  source_line = i
+                end
+              elseif current_source_matches and name == table_name then
+                return i
+              end
+            end
+          end
+        end
+
+        return current_source_matches and source_line or nil
+      end
+
+      local function find_dbt_source_locations(root, src_name, table_name)
+        local files = {}
+        vim.list_extend(files, vim.fn.globpath(root .. '/models', '**/*.yml', true, true))
+        vim.list_extend(files, vim.fn.globpath(root .. '/models', '**/*.yaml', true, true))
+
+        local locations = {}
+        for _, file in ipairs(files) do
+          local line = scan_source_file(file, src_name, table_name)
+          if line then
+            table.insert(locations, { file = file, line = line })
+          end
+        end
+        return locations
+      end
+
+      local function open_location(loc)
+        vim.cmd('edit ' .. vim.fn.fnameescape(loc.file))
+        vim.api.nvim_win_set_cursor(0, { loc.line, 0 })
+      end
+
+      _G.__dbt_goto_ref = function()
+        local line = vim.api.nvim_get_current_line()
+        local col = vim.fn.col '.'
+
+        local bufdir = vim.fn.expand '%:p:h'
+        local root = find_dbt_project_root(bufdir) or vim.fn.getcwd()
+
+        local src_name, table_name = dbt_source_under_cursor(line, col)
+        if src_name then
+          local locations = find_dbt_source_locations(root, src_name, table_name)
+
+          if #locations == 0 then
+            print(("No dbt source found for '%s.%s'"):format(src_name, table_name))
+          elseif #locations == 1 then
+            open_location(locations[1])
+          else
+            local items = {}
+            for _, loc in ipairs(locations) do
+              table.insert(items, ('%s:%d'):format(loc.file, loc.line))
+            end
+            vim.ui.select(items, { prompt = ('Multiple sources named %s.%s:'):format(src_name, table_name) }, function(_, idx)
+              if idx then
+                open_location(locations[idx])
+              end
+            end)
+          end
+          return
+        end
+
+        local model_name = dbt_ref_under_cursor(line, col)
+
+        if not model_name then
+          vim.cmd 'normal! gd'
+          return
+        end
+
+        local models_dir = root .. '/models'
+
+        local matches = vim.fs.find(model_name .. '.sql', { path = models_dir, type = 'file', limit = 100 })
+
+        if #matches == 0 then
+          print("No dbt model found for '" .. model_name .. "'")
+        elseif #matches == 1 then
+          vim.cmd('edit ' .. vim.fn.fnameescape(matches[1]))
+        else
+          vim.ui.select(matches, { prompt = 'Multiple models named ' .. model_name .. ':' }, function(choice)
+            if choice then
+              vim.cmd('edit ' .. vim.fn.fnameescape(choice))
+            end
+          end)
+        end
+      end
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'sql',
+        callback = function(event)
+          vim.keymap.set('n', 'gd', __dbt_goto_ref, { buffer = event.buf, desc = 'Goto dbt ref() model (fallback: gd)' })
+        end,
+      })
+
       -- Custom keymap to focus REPL window
       vim.keymap.set('n', '<space>sq', function()
         require('iron.core').send(nil, { 'exit()' })
