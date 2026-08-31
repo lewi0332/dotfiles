@@ -37,7 +37,7 @@ alias ll='ls -alF'
 # alias la='ls -A'
 alias la="ls -lahF ${colorflag}"
 alias l='ls -CF'
-
+alias lg='lazygit'
 
 alias python=python3
 alias vim=nvim
