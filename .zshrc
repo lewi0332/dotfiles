@@ -95,7 +95,11 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 
 # Load completions
-autoload -Uz compinit && compinit
+ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-${ZSH_VERSION}"
+mkdir -p "${ZSH_COMPDUMP:h}"
+autoload -Uz compinit && compinit -d "$ZSH_COMPDUMP"
+# Remove stray temp dump files left behind by interrupted compinit runs (>1 day old)
+for stray in "${ZSH_COMPDUMP}".*(N.mh+24); do rm -f "$stray"; done
 
 zinit cdreplay -q
 

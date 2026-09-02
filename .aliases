@@ -74,23 +74,72 @@ dbtv(){
 }
 
 # Same, but opens in a tmux popup instead of taking over the current pane.
+# Popup-first: the popup (or, outside tmux, the pane) opens immediately with
+# a "running" status, then runs dbt inside it, so a slow query is visibly
+# still working instead of leaving the caller staring at nothing. A hung
+# query gets killed after DBTVP_TIMEOUT seconds, and a failed query shows
+# dbt's stderr and waits for a keypress instead of silently closing.
 dbtvp(){
     local sql="$1"
     local limit="${2:-100}"
-    local tmpfile
+    local timeout_secs="${DBTVP_TIMEOUT:-180}"
+    local pwd_dir tmpfile errfile rawfile sqlfile scriptfile
+    pwd_dir=$(pwd)
     tmpfile=$(mktemp /tmp/dbtvp_XXXXXX)
+    errfile=$(mktemp /tmp/dbtvp_XXXXXX)
+    rawfile=$(mktemp /tmp/dbtvp_XXXXXX)
+    sqlfile=$(mktemp /tmp/dbtvp_XXXXXX)
+    scriptfile=$(mktemp /tmp/dbtvp_XXXXXX)
 
     # dbt show always appends its own LIMIT clause; strip any trailing
     # LIMIT in the user's SQL so we don't end up with two limits.
     sql=$(echo "$sql" | sed -E 's/[[:space:]]*;?[[:space:]]*[Ll][Ii][Mm][Ii][Tt][[:space:]]+[0-9]+[[:space:]]*;?[[:space:]]*$//')
+    printf '%s' "$sql" > "$sqlfile"
 
-    ./dbt_env/bin/dbt show --inline "$sql" --output json --quiet --limit "$limit" | jq '.show' > "$tmpfile"
+    # No `timeout`/`gtimeout` binary on stock macOS, so the deadline is
+    # implemented by hand: run dbt in the background, race it against a
+    # sleep, and SIGTERM it if the sleep wins.
+    cat > "$scriptfile" <<SCRIPT
+#!/usr/bin/env bash
+cd "$pwd_dir" || exit 1
+sql=\$(cat "$sqlfile")
+echo "Running dbt query (timeout ${timeout_secs}s)..."
+echo
+
+./dbt_env/bin/dbt show --inline "\$sql" --output json --quiet --limit "$limit" > "$rawfile" 2> "$errfile" &
+dbt_pid=\$!
+
+( sleep "$timeout_secs"; kill -TERM "\$dbt_pid" 2>/dev/null ) &
+watcher_pid=\$!
+
+wait "\$dbt_pid"
+dbt_status=\$?
+kill "\$watcher_pid" 2>/dev/null
+wait "\$watcher_pid" 2>/dev/null
+
+if [ "\$dbt_status" -eq 0 ] && jq '.show' "$rawfile" > "$tmpfile" 2>>"$errfile"; then
+    vd -f json "$tmpfile"
+else
+    echo
+    if [ "\$dbt_status" -ge 128 ]; then
+        echo "dbt show timed out after ${timeout_secs}s (killed)"
+    else
+        echo "dbt show failed:"
+    fi
+    echo
+    cat "$errfile"
+    echo
+    echo "Press any key to close..."
+    read -n 1 -s
+fi
+rm -f "$tmpfile" "$errfile" "$rawfile" "$sqlfile" "$scriptfile"
+SCRIPT
+    chmod +x "$scriptfile"
 
     if [ -n "$TMUX" ]; then
-        tmux popup -d "$(pwd)" -w 80% -h 70% -E "vd -f json '$tmpfile'; rm -f '$tmpfile'"
+        tmux popup -d "$pwd_dir" -w 80% -h 70% -E "$scriptfile"
     else
-        vd -f json "$tmpfile"
-        rm -f "$tmpfile"
+        bash "$scriptfile"
     fi
 }
 
