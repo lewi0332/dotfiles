@@ -7,7 +7,7 @@ autoload -Uz colors && colors
 setopt PROMPT_SUBST
 
 # Don't ask if user is sure when running rm with wildcards (like bash)
-setopt rmstarsilent
+# setopt rmstarsilent
 
 # If wildcard pattern has no matches, return an empty string (like bash)
 setopt no_nomatch
