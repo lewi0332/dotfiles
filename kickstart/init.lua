@@ -244,6 +244,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Reload buffers that changed on disk (e.g. edits made by Claude Code in another tmux window).
+-- Buffers with unsaved changes are never reloaded; Neovim warns instead.
+-- FocusGained needs `set -g focus-events on` in .tmux.conf.
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold' }, {
+  desc = 'Check for external file changes',
+  group = vim.api.nvim_create_augroup('autoread-checktime', { clear = true }),
+  callback = function()
+    if vim.fn.mode() ~= 'c' then
+      vim.cmd 'checktime'
+    end
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -751,6 +765,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'ruff', -- Used to format/organize imports in Python code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -801,6 +816,12 @@ require('lazy').setup({
           }
         end
       end,
+      formatters = {
+        -- Use the Mason-installed ruff; some project .venvs pin an old ruff
+        -- that lacks `ruff format` / `--stdin-filename` support.
+        ruff_format = { command = vim.fn.stdpath 'data' .. '/mason/bin/ruff' },
+        ruff_organize_imports = { command = vim.fn.stdpath 'data' .. '/mason/bin/ruff' },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         python = { 'ruff_format', 'ruff_organize_imports' },
